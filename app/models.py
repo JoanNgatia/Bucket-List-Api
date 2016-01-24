@@ -1,7 +1,9 @@
-from sqlalchemy import Column, String, Integer, DateTime, Boolean
-from sqlalchemy import create_engine
+from sqlalchemy import Column, String, Integer, ForeignKey, DateTime, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
+from sqlalchemy import create_engine
+from settings import DB_URI
+
 
 Base = declarative_base()
 
@@ -34,3 +36,8 @@ class BucketListItems(Base):
     date_modified = Column(DateTime)
     done = Column(Boolean, default=False)
     bucket_id = Column(Integer, ForeignKey('bucketlist.list_id'))
+
+if __name__ == "__main__":
+    engine = create_engine(DB_URI)
+    Base.metadata.drop_all(engine)
+    Base.metadata.create_all(engine)
