@@ -12,7 +12,7 @@ class User(Base):
     """Map user table"""
     __tablename__ = 'user'
     user_id = Column(Integer, primary_key=True)
-    username = Column(String)
+    username = Column(String, nullable=False)
     password = Column(String)
 
 
@@ -20,11 +20,11 @@ class BucketList(Base):
     """Map main bucketlist table"""
     __tablename__ = 'bucketlist'
     list_id = Column(Integer, primary_key=True)
-    list_name = Column(String)
+    list_name = Column(String, nullable=False)
     date_created = Column(DateTime)
     date_modified = Column(DateTime)
     creator = Column(Integer, ForeignKey('user.user_id'))
-    items = relationship('BucketListItems')
+    user = relationship(User)
 
 
 class BucketListItems(Base):
@@ -36,6 +36,7 @@ class BucketListItems(Base):
     date_modified = Column(DateTime)
     done = Column(Boolean, default=False)
     bucket_id = Column(Integer, ForeignKey('bucketlist.list_id'))
+    bucketlist = relationship(BucketList)
 
 if __name__ == "__main__":
     engine = create_engine(DB_URI)
