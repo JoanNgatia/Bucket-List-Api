@@ -9,4 +9,7 @@ htmlcov/
 nosetests.xml
 coverage.xml
 
-bucketlist.db
+*.db
+env
+.env
+.pyc

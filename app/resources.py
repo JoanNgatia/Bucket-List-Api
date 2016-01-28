@@ -27,9 +27,28 @@ bucketlistitems = {
 }
 
 parser = reqparse.RequestParser()
-parser.add_argument('user', type=str)
-parser.add_argument('bucketlist', type=str)
-parser.add_argument('bucketlistitem', type=str)
+# parser.add_argument('user', type=str)
+# parser.add_argument('bucketlist', type=str)
+# parser.add_argument('bucketlistitem', type=str)
+
+
+class UserRegistration(Resource):
+    def post(self):
+        parser.add_argument('username')
+        parser.add_argument('password')
+
+        args = parser.parse_args()
+        username = args['username']
+        password = args['password']
+
+        exists = session.query(User).filter_by(username).first()
+        if exists:
+            return {'message': 'User already exists!'}
+        else:
+            user = User(username=username, password=password)
+            session.add(user)
+            session.commit()
+            return {'message': 'User has been successfully registered'}
 
 
 class BucketListResource(Resource):
@@ -43,10 +62,16 @@ class BucketListResource(Resource):
 
     @marshal_with(bucketlists)
     def put(self, id):
-        parsed_args = parser.parse_args()
-        bucketlist = session.query(BucketList).filter(
-            BucketList.list_id == id).first()
-        bucketlist.items = parsed_args['items']
-        session.add(bucketlist)
-        session.commit()
-        return bucketlist, 201
+        parser.add_argument('list_name')
+        args = parser.parse_args()
+        list_name = args['list_name']
+
+        bucketlistexist = session.query(BucketList).filter_by(
+            BucketList.list_name == list_name).first()
+        if bucketlistexist:
+            return {'message': 'Bucketlist  already exists'}
+        else:
+            bucketlist = BucketList(list_name=list_name)
+            session.add(bucketlist)
+            session.commit()
+            return bucketlist, 201
