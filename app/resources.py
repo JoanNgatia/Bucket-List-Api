@@ -10,23 +10,25 @@ users = {
     'password': fields.String
 }
 
+bucketlistitems = {
+    'item_id': fields.Integer,
+    'item_name': fields.String,
+    'creator': fields.String,
+    # 'bucket_id': fields.Integer,
+    'done': fields.Boolean
+    # 'date_created': fields.DateTime,
+    # 'date_modified': fields.DateTime
+}
+
 bucketlists = {
-    'list_id': fields.Integer,
+    'id': fields.Integer(attribute='list_id'),
     'list_name': fields.String,
-    'items': fields.String,
+    'items': fields.Nested(bucketlistitems),
     'creator': fields.String,
     # 'date_created': fields.DateTime,
     # 'date_modified': fields.DateTime
 }
 
-bucketlistitems = {
-    'item_id': fields.Integer,
-    'item_name': fields.String,
-    'creator': fields.String,
-    'bucket_id': fields.Integer,
-    # 'date_created': fields.DateTime,
-    # 'date_modified': fields.DateTime
-}
 
 parser = reqparse.RequestParser()
 
@@ -88,9 +90,10 @@ class BucketListId(Resource):
         """Retrieve a particular bucketlist belonging to logged in user"""
         bucketlist = session.query(BucketList).filter_by(
             list_id=list_id).first()
-        if not bucketlist:
-            abort(404, message="Bucketlist {} does not exist".format(id))
-        return bucketlist
+        if bucketlist:
+            return bucketlist
+
+        abort(404, message="Bucketlist {} does not exist".format(id))
 
     @marshal_with(bucketlists)
     def put(self, list_id):
@@ -120,19 +123,53 @@ class BucketListId(Resource):
 
 
 class BucketListItemAdd(Resource):
-    """Resource to handle '/bucketlist/<list_id>/items' """
+    """Resource to handle '/bucketlist/<list_id>/item' """
 
-    @marshal_with(bucketlistitems)
+    # @marshal_with(bucketlistitems)
     def post(self, list_id):
         """Add a new item to a bucketlist"""
         bucketlistfind = session.query(
             BucketList).filter_by(list_id=list_id).first()
         if bucketlistfind:
-            parser.add_argument('item')
+            parser.add_argument('item_name')
             args = parser.parse_args()
+            item = args['item_name']
             bucketlistitem = BucketListItems(
-                item_name=args['item'], bucket_id=list_id)
+                item_name=item, bucketlist=bucketlistfind)
             session.add(bucketlistitem)
             session.commit()
             return {'message': 'An item has been added to Bucketlist {}'
                                .format(list_id)}
+            # return bucketlistitem
+        return {'message': 'Bucketlist does not exist'}
+
+
+class BucketListItemEdit(Resource):
+    """Resource to handle '/bucketlist/<list_id>/item/<item_id/'"""
+
+    @marshal_with(bucketlistitems)
+    def put(self, list_id, item_id):
+        """Update an existing bucketlist item"""
+        bucketlistfind = session.query(BucketList).filter_by(list_id=list_id).first()
+        if bucketlistfind:
+            bucketlistitemupdate = session.query(BucketListItems).filter_by(item_id=item_id).first()
+            if bucketlistitemupdate:
+                    parser.add_argument('item_name')
+                    args = parser.parse_args()
+                    bucketlistitemupdate.item_name = args['item_name']
+                    session.add(bucketlistitemupdate)
+                    session.commit()
+                    return {'message': 'Bucketlistitem {}  has been modified'
+                                       .format(item_id)}
+        return {'message': 'Bucketlist {} has not been found'
+                    .format(item_id)}
+
+    @marshal_with(bucketlistitems)
+    def delete(self, list_id, item_id):
+        """delete an item form an existing bucketlist"""
+        bucketlistfind = session.query(BucketList).filter_by(list_id=list_id).first()
+        if bucketlistfind:
+            bucketlistitemdelete = session.query(
+                BucketListItems).filter_by(item_id=item_id).first()
+            session.delete(bucketlistitemdelete)
+            session.commit()

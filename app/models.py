@@ -34,6 +34,7 @@ class BucketList(Base):
     date_modified = Column(DateTime)
     creator = Column(Integer, ForeignKey('user.user_id'))
     user = relationship(User)
+    items = relationship('BucketListItems')
 
     def create(self):
         """instantiate bucketlist at creation"""
@@ -54,7 +55,7 @@ class BucketListItems(Base):
     date_modified = Column(DateTime)
     done = Column(Boolean, default=False)
     bucket_id = Column(Integer, ForeignKey('bucketlist.list_id'))
-    bucketlist = relationship(BucketList)
+    bucketlist = relationship('BucketList')
 
 if __name__ == "__main__":
     engine = create_engine(DB_URI)
