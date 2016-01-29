@@ -1,3 +1,4 @@
+[![Code Issues](https://www.quantifiedcode.com/api/v1/project/e0557b55469e43bbada740de6704a1fc/badge.svg)](https://www.quantifiedcode.com/app/project/e0557b55469e43bbada740de6704a1fc)
 # BUCKETLIST API
 This is a bucket list API built on [Flask](http://flask.pocoo.org/).
 
