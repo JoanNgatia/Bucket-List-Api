@@ -3,8 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
 from settings import DB_URI
-from passlib.apps import custom_app_context as pwd_context
-
+from werkzeug.security import generate_password_hash, check_password_hash
 
 Base = declarative_base()
 
@@ -15,14 +14,20 @@ class User(Base):
     user_id = Column(Integer, primary_key=True)
     username = Column(String, nullable=False)
     password = Column(String)
+    password_hash = Column(String)
 
-    def hash_password(self, password):
-        """encrypts the password entered"""
-        self.password = pwd_context.encrypt(password)
+    @property
+    def password(self):
+        raise AttributeError('password is not a readable attribute')
+
+    @password.setter
+    def password(self, password):
+        """return password as hash to be stored in DB"""
+        self.password_hash = generate_password_hash(password)
 
     def verify_password(self, password):
         """Verify the password entered as the user's own"""
-        return pwd_context.verify(password, self.password)
+        return check_password_hash(self.password_hash, password)
 
 
 class BucketList(Base):

@@ -1,4 +1,4 @@
-from sqlalchemy import DateTime
+# from sqlalchemy import DateTime
 from models import User, BucketList, BucketListItems
 from db import session
 
@@ -104,7 +104,6 @@ class BucketListId(Resource):
             parser.add_argument('list_name')
             args = parser.parse_args()
             bucketlistedit.list_name = args['list_name']
-            # bucketlistedit.date_modified = DateTime.now()
             session.add(bucketlistedit)
             session.commit()
             return {'message': 'Bucketlist {} has been modified'
