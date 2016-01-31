@@ -4,6 +4,8 @@ from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
 from settings import DB_URI
 from werkzeug.security import generate_password_hash, check_password_hash
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from db import session
 
 Base = declarative_base()
 
@@ -15,6 +17,7 @@ class User(Base):
     username = Column(String, nullable=False)
     password = Column(String)
     password_hash = Column(String)
+    confirmed = Column(Boolean, default=False)
 
     @property
     def password(self):
@@ -28,6 +31,24 @@ class User(Base):
     def verify_password(self, password):
         """Verify the password entered as the user's own"""
         return check_password_hash(self.password_hash, password)
+
+    def generate_confirmation_token(self, expiration=3600):
+        """generates token with 1hour validity"""
+        s = Serializer(Base.config['SECRET_KEY'], expiration)
+        return s.dumps({'confirm': self.user_id})
+
+    def confirm(self, token):
+        """verifies token generated as the logged in users own"""
+        s = Serializer(Base.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except:
+            return False
+        if data.get('confirm') != self.user_id:
+            return False
+        self.cofirmed = True
+        session.add(self)
+        return True
 
 
 class BucketList(Base):
