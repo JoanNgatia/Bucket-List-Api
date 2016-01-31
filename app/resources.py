@@ -3,6 +3,7 @@ from models import User, BucketList, BucketListItems
 from db import session
 
 from flask.ext.restful import reqparse, abort, Resource, fields, marshal_with
+from flask.ext.login import login_required
 
 users = {
     'user_id': fields.Integer,
@@ -58,12 +59,14 @@ class UserRegistration(Resource):
 class BucketListAll(Resource):
     """Resource to handle '/bucketlists/'endpoint"""
 
+    @login_required
     @marshal_with(bucketlists)
     def get(self):
         """Retrieve all bucketlists belonging to the logged in user"""
         bucketlist = session.query(BucketList).all()
         return bucketlist
 
+    @login_required
     @marshal_with(bucketlists)
     def post(self):
         """Create a new bucketlist"""
@@ -85,6 +88,7 @@ class BucketListAll(Resource):
 class BucketListId(Resource):
     """Resource to handle '/bucketlist/<list_id>' endpoint"""
 
+    @login_required
     @marshal_with(bucketlists)
     def get(self, list_id):
         """Retrieve a particular bucketlist belonging to logged in user"""
@@ -95,6 +99,7 @@ class BucketListId(Resource):
 
         abort(404, message="Bucketlist {} does not exist".format(id))
 
+    @login_required
     @marshal_with(bucketlists)
     def put(self, list_id):
         """ Modify existing bucketlist """
@@ -111,6 +116,7 @@ class BucketListId(Resource):
         return {'message': 'Bucketlist {} has not been found'
                 .format(list_id)}
 
+    @login_required
     @marshal_with(bucketlists)
     def delete(self, list_id):
         """Delete an existing bucketlist"""
@@ -124,7 +130,8 @@ class BucketListId(Resource):
 class BucketListItemAdd(Resource):
     """Resource to handle '/bucketlist/<list_id>/item' """
 
-    # @marshal_with(bucketlistitems)
+    @login_required
+    @marshal_with(bucketlistitems)
     def post(self, list_id):
         """Add a new item to a bucketlist"""
         bucketlistfind = session.query(
@@ -137,36 +144,41 @@ class BucketListItemAdd(Resource):
                 item_name=item, bucketlist=bucketlistfind)
             session.add(bucketlistitem)
             session.commit()
-            return {'message': 'An item has been added to Bucketlist {}'
-                               .format(list_id)}
-            # return bucketlistitem
+            # return {'message': 'An item has been added to Bucketlist {}'
+                                # .format(list_id)}
+            return bucketlistitem
         return {'message': 'Bucketlist does not exist'}
 
 
 class BucketListItemEdit(Resource):
     """Resource to handle '/bucketlist/<list_id>/item/<item_id/'"""
 
+    @login_required
     @marshal_with(bucketlistitems)
     def put(self, list_id, item_id):
         """Update an existing bucketlist item"""
-        bucketlistfind = session.query(BucketList).filter_by(list_id=list_id).first()
+        bucketlistfind = session.query(
+            BucketList).filter_by(list_id=list_id).first()
         if bucketlistfind:
-            bucketlistitemupdate = session.query(BucketListItems).filter_by(item_id=item_id).first()
+            bucketlistitemupdate = session.query(
+                BucketListItems).filter_by(item_id=item_id).first()
             if bucketlistitemupdate:
-                    parser.add_argument('item_name')
-                    args = parser.parse_args()
-                    bucketlistitemupdate.item_name = args['item_name']
-                    session.add(bucketlistitemupdate)
-                    session.commit()
-                    return {'message': 'Bucketlistitem {}  has been modified'
-                                       .format(item_id)}
+                parser.add_argument('item_name')
+                args = parser.parse_args()
+                bucketlistitemupdate.item_name = args['item_name']
+                session.add(bucketlistitemupdate)
+                session.commit()
+                return {'message': 'Bucketlistitem {}  has been modified'
+                                   .format(item_id)}
         return {'message': 'Bucketlist {} has not been found'
-                    .format(item_id)}
+                .format(item_id)}
 
+    @login_required
     @marshal_with(bucketlistitems)
     def delete(self, list_id, item_id):
         """delete an item form an existing bucketlist"""
-        bucketlistfind = session.query(BucketList).filter_by(list_id=list_id).first()
+        bucketlistfind = session.query(
+            BucketList).filter_by(list_id=list_id).first()
         if bucketlistfind:
             bucketlistitemdelete = session.query(
                 BucketListItems).filter_by(item_id=item_id).first()
