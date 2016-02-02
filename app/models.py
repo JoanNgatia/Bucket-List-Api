@@ -1,3 +1,4 @@
+from flask import current_app
 from sqlalchemy import Column, String, Integer, ForeignKey, DateTime, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -35,12 +36,12 @@ class User(Base):
 
     def generate_confirmation_token(self, expiration=3600):
         """Generate token with 1hour validity."""
-        s = Serializer(Base.config['SECRET_KEY'], expiration)
+        s = Serializer(current_app.config['SECRET_KEY'], expires_in=expiration)
         return s.dumps({'confirm': self.user_id})
 
     def confirm(self, token):
         """Verify token generated as the logged in users own."""
-        s = Serializer(Base.config['SECRET_KEY'])
+        s = Serializer(current_app.config['SECRET_KEY'])
         try:
             data = s.loads(token)
         except SignatureExpired:

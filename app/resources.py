@@ -2,9 +2,11 @@
 from models import User, BucketList, BucketListItems
 from db import session
 
+from flask_httpauth import HTTPBasicAuth
 from flask.ext.restful import reqparse, abort, Resource, fields, marshal_with
 from flask.ext.login import login_required
 
+auth = HTTPBasicAuth()
 users = {
     'user_id': fields.Integer,
     'username': fields.String,
@@ -35,10 +37,10 @@ parser = reqparse.RequestParser()
 
 
 class UserRegistration(Resource):
-    """Resource to handle '/auth/register/' endpoint"""
+    """Resource to handle '/auth/register/' endpoint."""
 
     def post(self):
-        """Allow a user to register"""
+        """Allow a user to register."""
         parser.add_argument('username')
         parser.add_argument('password')
 
@@ -56,20 +58,40 @@ class UserRegistration(Resource):
                                .format(username)}
 
 
-class BucketListAll(Resource):
-    """Resource to handle '/bucketlists/'endpoint"""
+class UserLogin(Resource):
+    """Resource to handle '/auth/login/' endpoint."""
 
-    @login_required
+    def post(self):
+        """Log in a user."""
+        parser.add_argument('username')
+        parser.add_argument('password')
+
+        args = parser.parse_args()
+        username = args['username']
+        password = args['password']
+        userlogged = session.query(User).filter_by(username=username).first()
+        # user = User.verify_password(username, password)
+        # if user:
+        if User.verify_password(userlogged, password):
+            token = User.generate_confirmation_token(userlogged, username)
+            return token
+        return False
+
+
+class BucketListAll(Resource):
+    """Resource to handle '/bucketlists/'endpoint."""
+
+    @auth.login_required
     @marshal_with(bucketlists)
     def get(self):
-        """Retrieve all bucketlists belonging to the logged in user"""
+        """Retrieve all bucketlists belonging to the logged in user."""
         bucketlist = session.query(BucketList).all()
         return bucketlist
 
-    @login_required
+    @auth.login_required
     @marshal_with(bucketlists)
     def post(self):
-        """Create a new bucketlist"""
+        """Create a new bucketlist."""
         parser.add_argument('list_name')
         args = parser.parse_args()
         list_name = args['list_name']
@@ -86,12 +108,12 @@ class BucketListAll(Resource):
 
 
 class BucketListId(Resource):
-    """Resource to handle '/bucketlist/<list_id>' endpoint"""
+    """Resource to handle '/bucketlist/<list_id>' endpoint."""
 
-    @login_required
+    @auth.login_required
     @marshal_with(bucketlists)
     def get(self, list_id):
-        """Retrieve a particular bucketlist belonging to logged in user"""
+        """Retrieve a particular bucketlist belonging to logged in user."""
         bucketlist = session.query(BucketList).filter_by(
             list_id=list_id).first()
         if bucketlist:
@@ -99,10 +121,10 @@ class BucketListId(Resource):
 
         abort(404, message="Bucketlist {} does not exist".format(id))
 
-    @login_required
+    @auth.login_required
     @marshal_with(bucketlists)
     def put(self, list_id):
-        """ Modify existing bucketlist """
+        """Modify existing bucketlist."""
         bucketlistedit = session.query(
             BucketList).filter_by(list_id=list_id).first()
         if bucketlistedit:
@@ -116,10 +138,10 @@ class BucketListId(Resource):
         return {'message': 'Bucketlist {} has not been found'
                 .format(list_id)}
 
-    @login_required
+    @auth.login_required
     @marshal_with(bucketlists)
     def delete(self, list_id):
-        """Delete an existing bucketlist"""
+        """Delete an existing bucketlist."""
         bucketlistdelete = session.query(
             BucketList).filter_by(list_id=list_id).first()
         session.delete(bucketlistdelete)
@@ -128,12 +150,12 @@ class BucketListId(Resource):
 
 
 class BucketListItemAdd(Resource):
-    """Resource to handle '/bucketlist/<list_id>/item' """
+    """Resource to handle '/bucketlist/<list_id>/item'."""
 
-    @login_required
+    @auth.login_required
     @marshal_with(bucketlistitems)
     def post(self, list_id):
-        """Add a new item to a bucketlist"""
+        """Add a new item to a bucketlist."""
         bucketlistfind = session.query(
             BucketList).filter_by(list_id=list_id).first()
         if bucketlistfind:
@@ -151,12 +173,12 @@ class BucketListItemAdd(Resource):
 
 
 class BucketListItemEdit(Resource):
-    """Resource to handle '/bucketlist/<list_id>/item/<item_id/'"""
+    """Resource to handle '/bucketlist/<list_id>/item/<item_id/'."""
 
-    @login_required
+    @auth.login_required
     @marshal_with(bucketlistitems)
     def put(self, list_id, item_id):
-        """Update an existing bucketlist item"""
+        """Update an existing bucketlist item."""
         bucketlistfind = session.query(
             BucketList).filter_by(list_id=list_id).first()
         if bucketlistfind:
@@ -173,10 +195,10 @@ class BucketListItemEdit(Resource):
         return {'message': 'Bucketlist {} has not been found'
                 .format(item_id)}
 
-    @login_required
+    @auth.login_required
     @marshal_with(bucketlistitems)
     def delete(self, list_id, item_id):
-        """delete an item form an existing bucketlist"""
+        """Delete an item form an existing bucketlist."""
         bucketlistfind = session.query(
             BucketList).filter_by(list_id=list_id).first()
         if bucketlistfind:
