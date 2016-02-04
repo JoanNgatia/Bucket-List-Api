@@ -3,6 +3,8 @@
 [Code Climate]:https://codeclimate.com/github/andela-jngatia/Bucket-List-Api
 [![Code Climate](https://codeclimate.com/github/andela-jngatia/Bucket-List-Api/badges/gpa.svg)](https://codeclimate.com/github/andela-jngatia/Bucket-List-Api)
 
+[![Build Status](https://travis-ci.org/andela-jngatia/Bucket-List-Api.svg?branch=develop)](https://travis-ci.org/andela-jngatia/Bucket-List-Api)
+
 # BUCKETLIST API
 This is a bucket list API built on [Flask](http://flask.pocoo.org/).
 
