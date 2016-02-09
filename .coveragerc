@@ -6,3 +6,4 @@ omit =
     */lib/python/*
     *__repr__*
     *__eq__*
+    */migrations/*
