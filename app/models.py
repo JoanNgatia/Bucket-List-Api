@@ -1,17 +1,22 @@
-from flask import current_app
+import os
+
+from flask.ext.login import UserMixin
+
 from sqlalchemy import Column, String, Integer, ForeignKey, DateTime, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
-from settings import DB_URI
+
 from werkzeug.security import generate_password_hash, check_password_hash
-from itsdangerous import TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired
-from db import session
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+
+from settings import DB_URI
+
 
 Base = declarative_base()
 
 
-class User(Base):
+class User(Base, UserMixin):
     """Map user table."""
 
     __tablename__ = 'user'
@@ -20,38 +25,18 @@ class User(Base):
     password_hash = Column(String)
     confirmed = Column(Boolean, default=False)
 
-    @property
-    def password(self):
-        """Define the type of password to be parsed."""
-        raise AttributeError('password is not a readable attribute')
-
-    @password.setter
-    def password(self, password):
+    def hash_password(self, password):
         """Return password as hash to be stored in DB."""
         self.password_hash = generate_password_hash(password)
 
     def verify_password(self, password):
-        """Verify the password entered as the user's own."""
+        """Verify the password entered as the user's returns True if it is."""
         return check_password_hash(self.password_hash, password)
 
     def generate_confirmation_token(self, expiration=3600):
         """Generate token with 1hour validity."""
-        s = Serializer(current_app.config['SECRET_KEY'], expires_in=expiration)
+        s = Serializer(os.environ.get('SECRET_KEY'), expires_in=expiration)
         return s.dumps({'confirm': self.user_id})
-
-    def confirm(self, token):
-        """Verify token generated as the logged in users own."""
-        s = Serializer(current_app.config['SECRET_KEY'])
-        try:
-            data = s.loads(token)
-        except SignatureExpired:
-            return False
-        except BadSignature:
-            return False
-        if data.get('confirm') != self.user_id:
-            return False
-        self.confirmed = True
-        session.add(self)
 
 
 class BucketList(Base):
@@ -60,11 +45,11 @@ class BucketList(Base):
     __tablename__ = 'bucketlist'
     list_id = Column(Integer, primary_key=True)
     list_name = Column(String, nullable=False)
-    date_created = Column(DateTime)
-    date_modified = Column(DateTime)
     creator = Column(Integer, ForeignKey('user.user_id'))
     user = relationship(User)
     items = relationship('BucketListItems')
+    date_created = Column(DateTime)
+    date_modified = Column(DateTime)
 
     def create(self):
         """Instantiate bucketlist at creation."""
