@@ -16,3 +16,19 @@ The features attached to the service include:
 * creating new bucketlist items
 * updating and deleting the items 
 * retrieving a list of all created bucket lists by a registered user.
+
+## Accessing resources 
+httpie, the 'fresher' CLI client can be used to access the different resources on the different routes.
+
+A sample request to log in user 'jo' with password 'w' is:
+
+```http POST http://localhost:5000/auth/login/ username='jo' password='w'```
+
+A token is generated after this request.Hold on to it.You'll need it for access to bucketlists created by you.
+
+Simply attach the token to the request body for all routes that require login.
+An example of this is :
+
+```http http://localhost:5000/bucketlists/ 'token:<token_body>' ```
+
+This route returns all bucketlists created by the logged in user.
