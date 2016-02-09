@@ -1,45 +1,41 @@
-from sqlalchemy import DateTime
+from flask import request
+from flask.ext.restful import reqparse, Resource, fields, marshal
+from flask.ext.login import login_required, current_user
+from werkzeug.exceptions import BadRequestKeyError
+
+from sqlalchemy_paginator import Paginator
+from sqlalchemy_paginator.exceptions import EmptyPage
+
 from models import User, BucketList, BucketListItems
 from db import session
-
-from flask import g, request
-# from flask_httpauth import HTTPBasicAuth
-from flask.ext.restful import reqparse, abort, Resource, fields, marshal_with, marshal
-from flask.ext.login import LoginManager, login_required, current_user
-# from manage import login_manager
-# from sqlalchemy_paginator import Paginator
-
-# auth = HTTPBasicAuth()
-
-users = {
-    'user_id': fields.Integer,
-    'username': fields.String,
-    'password_hash': fields.String
-}
 
 bucketlistitems = {
     'item_id': fields.Integer,
     'item_name': fields.String,
-    'creator': fields.String,
-    # 'bucket_id': fields.Integer,
     'done': fields.Boolean
-    # 'date_created': fields.DateTime,
-    # 'date_modified': fields.DateTime
 }
 
 bucketlists = {
     'id': fields.Integer(attribute='list_id'),
+    'creator': fields.String,
     'list_name': fields.String,
     'items': fields.Nested(bucketlistitems),
-    # 'creator': fields.String,
-    'date_created': fields.DateTime,
-    'date_modified': fields.DateTime
 }
-
 
 parser = reqparse.RequestParser()
 
 
+def paging(fields, paginator, page):
+    """
+    This method uses paginator and page arguments to paginate SQLALchemy query
+    sets.The fields argument it takes is used to serialize the results,
+    courtesy of marshal.
+    """
+
+    try:
+        return marshal(paginator.page(page).object_list, fields), 200
+    except EmptyPage:
+        return {'message': "Page doesn't exist"}, 404
 
 
 class UserRegistration(Resource):
@@ -69,6 +65,7 @@ class UserLogin(Resource):
 
     def post(self):
         """Log in a user."""
+        # parser.add_argument('username', type="str", required=True)
         parser.add_argument('username')
         parser.add_argument('password')
         args = parser.parse_args()
@@ -76,36 +73,47 @@ class UserLogin(Resource):
         password_hash = args['password']
 
         userlogged = session.query(User).filter_by(username=username).first()
-        if userlogged:
-            if userlogged.verify_password(password_hash):
-                token = userlogged.generate_confirmation_token()
-                userlogged.confirmed = True
-                session.add(userlogged)
-                session.commit()
-                return {'token': token}
-            # if password not verified
-            return {'message': 'Password not verified'}
+
+        if not userlogged:
+            return {'message': "User doesn't exist"}
+        if userlogged.verify_password(password_hash):
+            token = userlogged.generate_confirmation_token()
+            return {'token': token}
+        # if password not verified
+        return {'message': 'Password not verified'}
         # if user doesn't exist
-        return {'message': "User doesn't exist"}
 
 
 class BucketListAll(Resource):
-
     """
     Resource to handle '/bucketlists/' and
     '/bucketlists/<int:page>' endpoint.
     """
-
     @login_required
-    def get(self):
-        """Retrieve all bucketlists belonging to the logged in user."""
-        # parser.add_argument('page')
-        # args = parser.parse_args()
-        # pageshow = args[page]
-        # limit = 20
+    def get(self, page=1):
+        """Retrieve all bucketlists belonging to the logged in user.
+        limit specifies the maximum number of results with default set to 20.
+        q specifies the term to search by through the bucketlists
+        """
+        try:
+            limit = int(request.args['limit'])
+        except BadRequestKeyError:
+            limit = 20
+        if limit > 100:
+            limit = 100
+
+        # try:
+        #     q = request.args['q']
+        # except BadRequestKeyError:
+        #     q = ''
+
         created_by = current_user.user_id
-        bucketlist = session.query(BucketList).filter_by(creator=created_by).all()
-        return marshal(bucketlist, bucketlists)
+        bucketlistget = session.query(BucketList).filter_by(
+            creator=created_by)
+        paginate = Paginator(bucketlistget, limit)
+        page_responses = paging(bucketlists, paginate, page)
+        return page_responses
+
 
     @login_required
     def post(self):
