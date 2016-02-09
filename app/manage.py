@@ -10,8 +10,8 @@ from flask.ext.login import LoginManager
 from itsdangerous import TimedJSONWebSignatureSerializer as \
     Serializer, BadSignature, SignatureExpired
 
-from resources import UserRegistration, UserLogin, BucketListAll, \
-    BucketListId, BucketListItemAdd, BucketListItemEdit
+from resources import UserRegistration, UserLogin, \
+    BucketListAll, BucketListId, BucketListItemAdd, BucketListItemEdit
 from db import session
 from models import User
 
@@ -31,7 +31,10 @@ login_manager.init_app(app)
 
 @login_manager.request_loader
 def load_user(request):
-    """Check authorization header and authenticate user for request."""
+    """Check authorization header and authenticate user for request.
+    Authenticate user with provided token where the login_required
+    decorator is used
+    """
     token = request.headers.get('token')
 
     if token:
@@ -54,5 +57,4 @@ api.add_resource(BucketListItemAdd, '/bucketlist/<list_id>/item/')
 api.add_resource(BucketListItemEdit, '/bucketlist/<list_id>/item/<item_id>/')
 
 if __name__ == '__main__':
-    # manager.run()
     app.run(debug=True)
