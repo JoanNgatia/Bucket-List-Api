@@ -10,8 +10,9 @@ from flask.ext.login import LoginManager
 from itsdangerous import TimedJSONWebSignatureSerializer as \
     Serializer, BadSignature, SignatureExpired
 
-from resources import UserRegistration, UserLogin, \
-    BucketListAll, BucketListId, BucketListItemAdd, BucketListItemEdit
+from authentication import UserRegistration, UserLogin
+from resources import BucketListAll, BucketListId, \
+    BucketListItemAdd, BucketListItemEdit
 from db import session
 from models import User
 

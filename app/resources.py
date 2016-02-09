@@ -1,87 +1,29 @@
 from flask import request
-from flask.ext.restful import reqparse, Resource, fields, marshal
+from flask.ext.restful import reqparse, Resource, marshal
 from flask.ext.login import login_required, current_user
 from werkzeug.exceptions import BadRequestKeyError
 
 from sqlalchemy_paginator import Paginator
 from sqlalchemy_paginator.exceptions import EmptyPage
 
-from models import User, BucketList, BucketListItems
+from models import BucketList, BucketListItems
 from db import session
+from serializer import bucketlists, bucketlistitems
 
-bucketlistitems = {
-    'item_id': fields.Integer,
-    'item_name': fields.String,
-    'done': fields.Boolean
-}
-
-bucketlists = {
-    'id': fields.Integer(attribute='list_id'),
-    'creator': fields.String,
-    'list_name': fields.String,
-    'items': fields.Nested(bucketlistitems),
-}
 
 parser = reqparse.RequestParser()
 
 
 def paging(fields, paginator, page):
     """
-    This method uses paginator and page arguments to paginate SQLALchemy query
+    Use imported paginator and page arguments to paginate SQLALchemy query
     sets.The fields argument it takes is used to serialize the results,
     courtesy of marshal.
     """
-
     try:
         return marshal(paginator.page(page).object_list, fields), 200
     except EmptyPage:
         return {'message': "Page doesn't exist"}, 404
-
-
-class UserRegistration(Resource):
-    """Resource to handle '/auth/register/' endpoint."""
-
-    def post(self):
-        """Allow a user to register."""
-        parser.add_argument('username')
-        parser.add_argument('password')
-
-        args = parser.parse_args()
-        username = args['username']
-        password = args['password']
-        exists = session.query(User).filter_by(username=username).first()
-        if exists:
-            return {'message': 'User already exists!'}
-        user = User(username=username)
-        user.hash_password(password)
-        session.add(user)
-        session.commit()
-        return {'message': 'User {} has been successfully registered'
-                           .format(username)}
-
-
-class UserLogin(Resource):
-    """Resource to handle '/auth/login/' endpoint."""
-
-    def post(self):
-        """Log in a user."""
-        # parser.add_argument('username', type="str", required=True)
-        parser.add_argument('username')
-        parser.add_argument('password')
-        args = parser.parse_args()
-        username = args['username']
-        password_hash = args['password']
-
-        userlogged = session.query(User).filter_by(username=username).first()
-
-        if not userlogged:
-            return {'message': "User doesn't exist"}
-        if userlogged.verify_password(password_hash):
-            token = userlogged.generate_confirmation_token()
-            return {'token': token}
-        # if password not verified
-        return {'message': 'Password not verified'}
-        # if user doesn't exist
 
 
 class BucketListAll(Resource):
@@ -113,7 +55,6 @@ class BucketListAll(Resource):
         paginate = Paginator(bucketlistget, limit)
         page_responses = paging(bucketlists, paginate, page)
         return page_responses
-
 
     @login_required
     def post(self):
