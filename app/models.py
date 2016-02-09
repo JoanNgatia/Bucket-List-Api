@@ -24,6 +24,7 @@ class User(Base, UserMixin):
     username = Column(String, nullable=False)
     password_hash = Column(String)
     confirmed = Column(Boolean, default=False)
+    bucketlists = relationship("BucketList")
 
     def hash_password(self, password):
         """Return password as hash to be stored in DB."""
@@ -46,7 +47,6 @@ class BucketList(Base):
     list_id = Column(Integer, primary_key=True)
     list_name = Column(String, nullable=False)
     creator = Column(Integer, ForeignKey('user.user_id'))
-    user = relationship(User)
     items = relationship('BucketListItems')
     date_created = Column(DateTime)
     date_modified = Column(DateTime)
@@ -71,7 +71,6 @@ class BucketListItems(Base):
     date_modified = Column(DateTime)
     done = Column(Boolean, default=False)
     bucket_id = Column(Integer, ForeignKey('bucketlist.list_id'))
-    bucketlist = relationship('BucketList')
 
 if __name__ == "__main__":
     engine = create_engine(DB_URI)
