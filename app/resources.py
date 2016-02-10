@@ -8,7 +8,7 @@ from sqlalchemy_paginator.exceptions import EmptyPage
 
 from models import BucketList, BucketListItems
 from db import session
-from serializer import bucketlists, bucketlistitems
+from serializer import bucketlists
 
 
 parser = reqparse.RequestParser()
@@ -31,6 +31,7 @@ class BucketListAll(Resource):
     Resource to handle '/bucketlists/' and
     '/bucketlists/<int:page>' endpoint.
     """
+
     @login_required
     def get(self, page=1):
         """Retrieve all bucketlists belonging to the logged in user.
@@ -44,14 +45,17 @@ class BucketListAll(Resource):
         if limit > 100:
             limit = 100
 
-        # try:
-        #     q = request.args['q']
-        # except BadRequestKeyError:
-        #     q = ''
+        q = request.args.get('q', type=str)
 
         created_by = current_user.user_id
-        bucketlistget = session.query(BucketList).filter_by(
-            creator=created_by)
+        if q:
+            # bucketlistget = session.query(BucketList).filter_by(
+            #     list_name=q, creator=created_by)
+            bucketlistget = session.query(BucketList).filter_by(
+                creator=created_by).filter(BucketList.list_name.contains(q))
+        else:
+            bucketlistget = session.query(BucketList).filter_by(
+                creator=created_by)
         paginate = Paginator(bucketlistget, limit)
         page_responses = paging(bucketlists, paginate, page)
         return page_responses
