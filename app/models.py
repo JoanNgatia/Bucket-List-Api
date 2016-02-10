@@ -2,10 +2,12 @@ import os
 
 from flask.ext.login import UserMixin
 
-from sqlalchemy import Column, String, Integer, ForeignKey, DateTime, Boolean
+from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, Boolean, func
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
+
+from datetime import datetime
 
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
@@ -48,17 +50,17 @@ class BucketList(Base):
     list_name = Column(String, nullable=False)
     creator = Column(Integer, ForeignKey('user.user_id'))
     items = relationship('BucketListItems')
-    date_created = Column(DateTime)
-    date_modified = Column(DateTime)
+    date_created = Column(DateTime, default=func.now(), onupdate=func.now())
+    date_modified = Column(DateTime, default=func.now(), onupdate=func.now())
 
     def create(self):
         """Instantiate bucketlist at creation."""
         self.creator = User.user_id
-        self.date_created = DateTime.now()
+        self.date_created = datetime.utcnow()
 
     def modify(self):
         """Instantiate modification to bucketlist."""
-        self.date_modified = DateTime.now()
+        self.date_modified = datetime.utcnow()
 
 
 class BucketListItems(Base):

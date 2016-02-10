@@ -8,7 +8,9 @@ from flask.ext.restful import fields
 bucketlistitems = {
     'item_id': fields.Integer,
     'item_name': fields.String,
-    'done': fields.Boolean
+    'done': fields.Boolean,
+    'date_created': fields.DateTime,
+    'date_modified': fields.DateTime
 }
 
 bucketlists = {
@@ -16,4 +18,6 @@ bucketlists = {
     'creator': fields.String,
     'list_name': fields.String,
     'items': fields.Nested(bucketlistitems),
+    'date_created': fields.DateTime,
+    'date_modified': fields.DateTime
 }
