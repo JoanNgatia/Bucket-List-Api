@@ -37,3 +37,10 @@ This route returns all bucketlists created by the logged in user.
 A user is also able to specify the number of bucketlists they would like to view per page.The default is however set at 20 with a 100-bucketlist max limit.
 
 ``` http http://localhost:5000/bucketlists/?limit=2 'token:<token_body>' ```
+
+
+A user can also search for a bucektlist by name, by appending the name to the request body.
+
+``` http://localhost:5000/bucketlists/?q=ride  'token:<token_body>' ```
+
+This request returns all bucketlists whose names contain the word ride.

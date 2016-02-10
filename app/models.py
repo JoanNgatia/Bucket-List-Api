@@ -56,11 +56,11 @@ class BucketList(Base):
     def create(self):
         """Instantiate bucketlist at creation."""
         self.creator = User.user_id
-        self.date_created = datetime.utcnow()
+        self.date_created = datetime.now()
 
     def modify(self):
         """Instantiate modification to bucketlist."""
-        self.date_modified = datetime.utcnow()
+        self.date_modified = datetime.now()
 
 
 class BucketListItems(Base):
