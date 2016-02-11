@@ -4,14 +4,17 @@ import nose
 from app.models import User
 
 
-class UserModelTestCase(unittest.TestCase):
+class TestUserAuthentication(unittest.TestCase):
     def test_password_setter(self):
+        """ Check password setting """
         u = User(password_hash='cat')
         self.assertTrue(u.password_hash is not None)
 
     def test_password_verification(self):
+        """ Check password verification """
         u = User(password_hash='cat')
-        self.assertFalse(u.verify_password('cat'))
+        u.hash_password('cat')
+        self.assertTrue(u.verify_password('cat'))
         self.assertFalse(u.verify_password('dog'))
 
 if __name__ == '__main__':
