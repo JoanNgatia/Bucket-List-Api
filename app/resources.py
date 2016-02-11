@@ -49,8 +49,6 @@ class BucketListAll(Resource):
 
         created_by = current_user.user_id
         if q:
-            # bucketlistget = session.query(BucketList).filter_by(
-            #     list_name=q, creator=created_by)
             bucketlistget = session.query(BucketList).filter_by(
                 creator=created_by).filter(BucketList.list_name.contains(q))
         else:
