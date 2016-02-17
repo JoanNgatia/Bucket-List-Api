@@ -1,7 +1,9 @@
 """
     This files handles the authentication logic.
 """
+from flask import flash
 from flask.ext.restful import reqparse, Resource
+from flask.ext.login import logout_user
 
 from models import User
 from db import session
@@ -48,6 +50,15 @@ class UserLogin(Resource):
             return {'message': "User doesn't exist"}
         if userlogged.verify_password(password_hash):
             token = userlogged.generate_confirmation_token()
+            flash("user successfully logged in")
             return {'token': token}
         # if password not verified
         return {'message': 'Incorrect password.'}
+
+
+class UserLogout(Resource):
+    """Resource to handle '/auth/logout/' endpoint."""
+
+    def post(self):
+        logout_user()
+        return {'message': 'user successfully logged out.'}

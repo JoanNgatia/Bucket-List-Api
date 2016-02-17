@@ -68,7 +68,7 @@ class BucketListAll(Resource):
             list_name=list_name).first()
         created_by = current_user.user_id
         if bucketlistexist:
-            return {'message': 'Bucketlist  already exists'}
+            return {'message': 'Bucketlist  already exists'}, 400
         else:
             bucketlist = BucketList(list_name=list_name, creator=created_by)
             session.add(bucketlist)
@@ -87,7 +87,7 @@ class BucketListId(Resource):
         if bucketlist:
             return marshal(bucketlist, bucketlists)
 
-        return {'message': 'Bucketlist {} does not exist'.format(list_id)}
+        return {'message': 'Bucketlist {} does not exist'.format(list_id)}, 204
 
     @login_required
     def put(self, list_id):
