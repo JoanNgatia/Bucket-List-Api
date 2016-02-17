@@ -1,1 +1,1 @@
-DB_URI = 'sqlite:///./bucketlist.db'
+DB_URI = 'sqlite:///bucketlist.db'

@@ -116,7 +116,7 @@ class BucketListId(Resource):
 
 
 class BucketListItemAdd(Resource):
-    """Resource to handle '/bucketlist/<list_id>/item'."""
+    """Resource to handle '/bucketlist/<list_id>/item/'."""
 
     @login_required
     def post(self, list_id):
@@ -128,7 +128,7 @@ class BucketListItemAdd(Resource):
             args = parser.parse_args()
             item = args['item_name']
             bucketlistitem = BucketListItems(
-                item_name=item, bucketlist=bucketlistfind)
+                item_name=item, bucket_id=bucketlistfind.list_id)
             session.add(bucketlistitem)
             session.commit()
             return {'message': '{} has been added to Bucketlist {}'

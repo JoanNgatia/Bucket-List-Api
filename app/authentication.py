@@ -1,5 +1,5 @@
 """
-     This files handles the authentication logic.
+    This files handles the authentication logic.
 """
 from flask.ext.restful import reqparse, Resource
 
@@ -21,7 +21,7 @@ class UserRegistration(Resource):
         username = args['username']
         password = args['password']
         exists = session.query(User).filter_by(username=username).first()
-        if exists:
+        if exists and exists.username == username:
             return {'message': 'User already exists!'}
         user = User(username=username)
         user.hash_password(password)
@@ -36,7 +36,6 @@ class UserLogin(Resource):
 
     def post(self):
         """Log in a user."""
-        # parser.add_argument('username', type="str", required=True)
         parser.add_argument('username')
         parser.add_argument('password')
         args = parser.parse_args()
@@ -51,5 +50,4 @@ class UserLogin(Resource):
             token = userlogged.generate_confirmation_token()
             return {'token': token}
         # if password not verified
-        return {'message': 'Password not verified'}
-        # if user doesn't exist
+        return {'message': 'Incorrect password.'}

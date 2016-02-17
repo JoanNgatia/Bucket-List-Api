@@ -15,7 +15,6 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 from settings import DB_URI
 
-
 Base = declarative_base()
 
 
@@ -51,7 +50,7 @@ class BucketList(Base):
     list_name = Column(String, nullable=False)
     creator = Column(Integer, ForeignKey('user.user_id'))
     items = relationship('BucketListItems')
-    date_created = Column(DateTime, default=func.now(), onupdate=func.now())
+    date_created = Column(DateTime, default=func.now())
     date_modified = Column(DateTime, default=func.now(), onupdate=func.now())
 
     def create(self):
@@ -70,8 +69,8 @@ class BucketListItems(Base):
     __tablename__ = 'bucketlistitems'
     item_id = Column(Integer, primary_key=True)
     item_name = Column(String)
-    date_created = Column(DateTime)
-    date_modified = Column(DateTime)
+    date_created = Column(DateTime, default=func.now())
+    date_modified = Column(DateTime, default=func.now(), onupdate=func.now())
     done = Column(Boolean, default=False)
     bucket_id = Column(Integer, ForeignKey('bucketlist.list_id'))
 
