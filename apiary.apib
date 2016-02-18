@@ -1,80 +1,91 @@
 FORMAT: 1A
 HOST: http://polls.apiblueprint.org/
 
-# BucketList
+# BucketList-API
+This is a bucket list API built on [Flask](http://flask.pocoo.org/).
 
-Polls is a simple API allowing consumers to view polls and vote in them.
+This feature rich API requires token based authentication to access resources.
+It also has pagination and search capabilities on the resources requested.
 
-## Questions Collection [/questions]
 
-### List All Questions [GET]
+The features attached to the service include: 
+* authenticating a user
+* creating new bucketlist items
+* updating and deleting the items 
+* retrieving a list of all created bucket lists by a registered user.
 
-+ Response 200 (application/json)
 
-        [
-            {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 2048
-                    }, {
-                        "choice": "Python",
-                        "votes": 1024
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 512
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 256
-                    }
-                ]
-            }
-        ]
+## User Authentication 
 
-### Create a New Question [POST]
-
-You may create your own question using this action. It takes a JSON
-object containing a question and a collection of answers in the
-form of choices.
+### Registration [/auth/register/]
+### Register a new user [POST]
+You may use any name or password combination for the registration.
 
 + Request (application/json)
 
         {
-            "question": "Favourite programming language?",
-            "choices": [
-                "Swift",
-                "Python",
-                "Objective-C",
-                "Ruby"
-            ]
+            "username": "Lana",
+            "password": "Kane"
+        }
+        
++ Response 201 (application/json)
+    
+        {
+            "message": "User Lana has successfully been registered"
         }
 
-+ Response 201 (application/json)
+### Login [/auth/login/]
+### Log in a user [POST]
 
+Use your correct password and username cobination to verify your identity.
+Do take note of the token returned on successful login as it will be required
+to access other resources.
+
++ Request (application/json)
+
+        {
+            "username": "Lana",
+            "password": "Kane"
+        }
+        
++ Response 200 (application/json)
+
+        {
+            "token": "Som3Rand0mTok3n"
+        }
+
+## Group Resources
+
+### Bucketlist Resources [/bucketlists/]
+
+### Create a new bucketlist [POST]
+Add a new bucketlist to your to-dos
+
++ Request (application/json)
+    
     + Headers
-
-            Location: /questions/2
-
+        
+            Authorization: JWT Token
+    
     + Body
 
             {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 0
-                    }, {
-                        "choice": "Python",
-                        "votes": 0
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 0
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 0
-                    }
-                ]
+                "list_name": "Bae for Kiki"
             }
+            
++ Response 200 (application/json)
+    
+        {
+            "creator": "1",
+            "id": 1,
+            "list_name": "Bae for Kiki",
+            "date_created": "Wed, 17 Feb 2016 12:14:33 -0000",
+            "date_modified": "Wed, 17 Feb 2016 12:14:33 -0000",
+            "items": []
+        }
+
++ Response 400 (application/json)
+
+        {
+            "message": "There was an error while trying to create your resource"
+        }
