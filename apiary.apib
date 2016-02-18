@@ -73,7 +73,7 @@ Add a new bucketlist to your to-dos
                 "list_name": "Bae for Kiki"
             }
             
-+ Response 200 (application/json)
++ Response 201 (application/json)
     
         {
             "creator": "1",
@@ -87,5 +87,128 @@ Add a new bucketlist to your to-dos
 + Response 400 (application/json)
 
         {
-            "message": "There was an error while trying to create your resource"
+            "message": "There was an error while trying to create your bucketlist"
+        }
+
+### List all bucketlists [GET]
+Retrieve all bucketlists belonging to logged in user.
+
++ Request (application/json)
+   
+    + Headers
+        
+            Authorization: JWT Token
+
++ Response 200 (application/json)
+
+        {
+            "creator": "1",
+            "id": 1,
+            "list_name": "Bae for Kiki",
+            "date_created": "Wed, 17 Feb 2016 12:14:33 -0000",
+            "date_modified": "Wed, 17 Feb 2016 12:14:33 -0000",
+            "items": []
+        }
+
++ Response 400 (application/json)
+
+        {
+            "message": "There was an error while trying to get your bucketlists"
+        }
+
++ Response 404 (application/json)
+        
+        {
+            "message": "There was an error while trying to get your bucketlists"
+        }
+        
+### Single BucketList Resource [/bucketlists/<list_id>/]
+
+## Get a single bucketlist[GET]
+
++ Parameters
+        
+    + list_id (number) - ID of the required bucketlist
+
++ Request (application/json)
+
+    + Headers
+        
+            Authorization: JWT Token
+
++ Response 200 (application/json)
+
+        {
+            "creator": "1",
+            "id": list_id,
+            "list_name": "Bae for Kiki",
+            "date_created": "Wed, 17 Feb 2016 12:14:33 -0000",
+            "date_modified": "Wed, 17 Feb 2016 12:14:33 -0000",
+            "items": []
+        }
+
++ Response 400 (application/json)
+
+        {
+            "message": "There was an error while trying to get your bucketlists"
+        }
+
++ Response 404 (application/json)
+        
+        {
+            "message": "There was an error while trying to get your bucketlists"
+        }
+        
+## Update a single bucketlist[PUT]
++ Parameters
+        
+    + list_id (number) - ID of the required bucketlist
+
++ Request (application/json)
+
+    + Headers
+        
+            Authorization: JWT Token
+
+    + Body 
+    
+            {
+                "id": list_id,
+                "list_name": "updated bucketlist name",
+            }
+            
++ Response 200 (application/json)
+        
+        {
+            "creator": "1",
+            "id": list_id,
+            "list_name": "Updated list name",
+            "date_created": "Wed, 17 Feb 2016 12:14:33 -0000",
+            "date_modified": "Wed, 17 Feb 2016 12:33:33 -0000",
+            "items": []
+        }
+        
+## Delete a bucketlist[DELETE]
++ Parameters
+        
+    + list_id (number) - ID of the required bucketlist
+
++ Request (application/json)
+
+    + Headers
+        
+            Authorization: JWT Token
+
++ Response 204 (application/json)
+
++ Response 400 (application/json)
+
+        {
+            "message": "There was an error trying to delete this bucketlist"
+        }
+        
++ Response 404 (application/json)
+
+        {
+            "message": "There was an error while trying to delete this bucketlist"
         }
