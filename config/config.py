@@ -7,7 +7,7 @@ class Config(object):
     DEBUG = True
     TESTING = True
     SECRET_KEY = os.environ['SECRET_KEY']
-    DATABASE_URL = 'sqlite:///app/bucketlist.db'
+    DATABASE_URL = 'sqlite:///bucketlist.db'
 
 
 class TestingConfig(Config):
@@ -15,6 +15,7 @@ class TestingConfig(Config):
 
     TESTING = True
     DATABASE_URL = 'sqlite:///tests/test.db'
+    SERVER_NAME = 'http://localhost:5000/'
 
 
 class DevelopmentConfig(Config):
