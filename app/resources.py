@@ -48,15 +48,17 @@ class BucketListAll(Resource):
         q = request.args.get('q', type=str)
 
         created_by = current_user.user_id
-        if q:
-            bucketlistget = session.query(BucketList).filter_by(
-                creator=created_by).filter(BucketList.list_name.contains(q))
-        else:
-            bucketlistget = session.query(BucketList).filter_by(
-                creator=created_by)
-        paginate = Paginator(bucketlistget, limit)
-        page_responses = paging(bucketlists, paginate, page)
-        return page_responses
+        if created_by:
+            if q:
+                bucketlistget = session.query(BucketList).filter_by(
+                    creator=created_by).filter(BucketList.list_name.contains(q))
+            else:
+                bucketlistget = session.query(BucketList).filter_by(
+                    creator=created_by)
+            paginate = Paginator(bucketlistget, limit)
+            page_responses = paging(bucketlists, paginate, page)
+            return page_responses, 200
+        return {'message': 'Please login to view your bucketlists'}, 400
 
     @login_required
     def post(self):
@@ -85,9 +87,9 @@ class BucketListId(Resource):
         bucketlist = session.query(BucketList).filter_by(
             list_id=list_id).first()
         if bucketlist:
-            return marshal(bucketlist, bucketlists)
+            return marshal(bucketlist, bucketlists), 200
 
-        return {'message': 'Bucketlist {} does not exist'.format(list_id)}, 204
+        return {'message': 'Bucketlist {} does not exist'.format(list_id)}, 404
 
     @login_required
     def put(self, list_id):
@@ -101,9 +103,9 @@ class BucketListId(Resource):
             session.add(bucketlistedit)
             session.commit()
             return {'message': 'Bucketlist {} has been modified'
-                               .format(list_id)}
+                               .format(list_id)}, 202
         return {'message': 'Bucketlist {} has not been found'
-                .format(list_id)}
+                .format(list_id)}, 404
 
     @login_required
     def delete(self, list_id):
@@ -112,7 +114,7 @@ class BucketListId(Resource):
             BucketList).filter_by(list_id=list_id).first()
         session.delete(bucketlistdelete)
         session.commit()
-        return {'message': 'Bucketlist {} has been deleted'.format(list_id)}
+        return {'message': 'Bucketlist {} has been deleted'.format(list_id)}, 204
 
 
 class BucketListItemAdd(Resource):
@@ -132,8 +134,8 @@ class BucketListItemAdd(Resource):
             session.add(bucketlistitem)
             session.commit()
             return {'message': '{} has been added to Bucketlist {}'
-                               .format(item, list_id)}
-        return {'message': 'Bucketlist does not exist'}
+                               .format(item, list_id)}, 201
+        return {'message': 'Bucketlist does not exist'.format(list_id)}, 404
 
 
 class BucketListItemEdit(Resource):
@@ -154,9 +156,9 @@ class BucketListItemEdit(Resource):
                 session.add(bucketlistitemupdate)
                 session.commit()
                 return {'message': 'Bucketlistitem {}  has been modified'
-                                   .format(item_id)}
+                                   .format(item_id)}, 200
         return {'message': 'Bucketlist {} has not been found'
-                .format(item_id)}
+                .format(item_id)}, 404
 
     @login_required
     def delete(self, list_id, item_id):
@@ -168,3 +170,5 @@ class BucketListItemEdit(Resource):
                 BucketListItems).filter_by(item_id=item_id).first()
             session.delete(bucketlistitemdelete)
             session.commit()
+            return {'message': 'BucketlistItem {} has been deleted'
+                               .format(item_id)}, 204
