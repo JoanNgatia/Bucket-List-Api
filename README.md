@@ -44,3 +44,14 @@ A user can also search for a bucektlist by name, by appending the name to the re
 ``` http://localhost:5000/bucketlists/?q=ride  'token:<token_body>' ```
 
 This request returns all bucketlists whose names contain the word ride.
+
+### API endpoints
+Possible API endpoints for use with this application can be found on this [Apiary Doc](http://docs.bucketlist6.apiary.io/#)
+
+### How it works on your local machine
+1. Simply clone the repo by running ```git clone https://github.com/andela-jngatia/Bucket-List-Api.git```.
+2. Install dependencies as per the requirements.txt file within your virtual environment. ```pip install -r requirements.txt```.
+3. Create the database by running ```python main\manage.py db init ``` and make the migrations required by running
+```python main\manage.py db migrate```
+4. Access the API by running ```python manage.py runserver```
+5. Create bucketlists and update them as you wish using either the httpie option as discussed or using [Postman](https://www.getpostman.com/).
