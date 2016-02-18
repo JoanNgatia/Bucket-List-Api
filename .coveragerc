@@ -7,3 +7,5 @@ omit =
     *__repr__*
     *__eq__*
     */migrations/*
+    */db/*
+    */database/*
