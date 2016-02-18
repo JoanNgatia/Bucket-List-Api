@@ -5,8 +5,8 @@ from flask import flash
 from flask.ext.restful import reqparse, Resource
 from flask.ext.login import logout_user
 
-from models import User
-from db import session
+from app.models import User
+from app.db import session
 
 parser = reqparse.RequestParser()
 
