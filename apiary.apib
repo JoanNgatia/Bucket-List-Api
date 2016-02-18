@@ -121,7 +121,8 @@ Retrieve all bucketlists belonging to logged in user.
         {
             "message": "There was an error while trying to get your bucketlists"
         }
-        
+
+       
 ### Single BucketList Resource [/bucketlists/<list_id>/]
 
 ## Get a single bucketlist[GET]
@@ -158,6 +159,7 @@ Retrieve all bucketlists belonging to logged in user.
         {
             "message": "There was an error while trying to get your bucketlists"
         }
+
         
 ## Update a single bucketlist[PUT]
 + Parameters
@@ -187,7 +189,8 @@ Retrieve all bucketlists belonging to logged in user.
             "date_modified": "Wed, 17 Feb 2016 12:33:33 -0000",
             "items": []
         }
-        
+
+       
 ## Delete a bucketlist[DELETE]
 + Parameters
         
@@ -211,4 +214,111 @@ Retrieve all bucketlists belonging to logged in user.
 
         {
             "message": "There was an error while trying to delete this bucketlist"
+        }
+        
+### BucketListItem creation [/bucketlist/<list_id>/item/]
+
+## Add a new bucketlist item [POST]
+Flesh out your bucketlists by stating exactly what you need to achieve. :-)
+
++ Parameters
+        
+    + list_id (number) - ID of the required bucketlist
+
++ Request (application/json)
+
+    + Headers
+        
+            Authorization: JWT Token
+    
+    + Body 
+    
+            {
+                "id": list_id,
+                "item_name": "Tell Archer about #bae4Kiki"
+            }
+
++ Response 200 (application/json)
+    
+        {
+            "creator": "1",
+            "id": list_id,
+            "list_name": "Updated list name",
+            "date_created": "Wed, 17 Feb 2016 12:14:33 -0000",
+            "date_modified": "Wed, 17 Feb 2016 13:36:30 -0000",
+            "items": [
+                        {
+                            "date_created": "Wed, 17 Feb 2016 13:36:30 -0000",
+                            "date_modified": "Wed, 17 Feb 2016 13:36:30 -0000",
+                            "done": false,
+                            "item_id": 1,
+                            "item_name": "Ein Schatz gefunden ist."
+                        }
+            ]
+        }
+
+### BucketListItem manipulation [/bucketlist/<list_id>/item/<item_id>]
+
+You can update or delete the items created as you wish.
+Handy for when you finally want to cross something off your bucketlist.
+
++ Parameters
+        
+    + list_id (number) - ID of the required bucketlist
+    + item_id (number) - ID of the required bucketlist item
+
+## Update a Bucketlist item [PUT]
+
++ Request (application/json)
+
+    + Headers
+        
+            Authorization: JWT Token
+    
+    + Body 
+    
+            {
+                "id": list_id,
+                "item_name": "Tell Mallory about #bae4Kiki"
+            }
+            
++ Response 200 (application/json)
+    
+        {
+            "creator": "1",
+            "id": list_id,
+            "list_name": "Updated list name",
+            "date_created": "Wed, 17 Feb 2016 12:14:33 -0000",
+            "date_modified": "Wed, 17 Feb 2016 13:40:20 -0000",
+            "items": [
+                        {
+                            "date_created": "Wed, 17 Feb 2016 13:36:30 -0000",
+                            "date_modified": "Wed, 17 Feb 2016 13:40:20 -0000",
+                            "done": false,
+                            "item_id": item_id,
+                            "item_name": "Tell Mallory about #bae4Kiki."
+                        }
+            ]
+        }
+
+## Delete a bucketlist item [DELETE]
+
++ Request (application/json)
+
+    + Headers
+        
+            Authorization: JWT Token
+
++ Response 204 (application/json)
+
++ Response 400 (application/json)
+
+        {
+            "message": "There was an error trying to delete this bucketlist item."
+        }
+        
++ Response 404 (application/json)
+
+        {
+            "message": "There was an error while trying to delete this bucketlist item."
         }
