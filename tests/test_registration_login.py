@@ -2,30 +2,35 @@ import nose
 import json
 
 from test_base import TestBase
-# from app.models import User
+from flask import url_for
+from app.models import User
 
 
 class TestUserAuthentication(TestBase):
     # defaultusername = 'Archer'
     # defaultpassword = 'Sterling'
+    # def create_dummy_user(self):
+    #     self.defaultusername = 'Archer'
+    #     self.defaultpassword = 'Sterling'
+    #     self.dummy_user = User(username=self.defaultusername, password_hash=self.defaultpassword)
 
     def test_registration_without_password(self):
         """Test registration with no password."""
-        response = self.client.post(
-            '/auth/register/', data=json.dumps({'username': 'Archer'}))
-        self.assertFalse(response.status_code == 400)
+        response = self.client.post('/auth/register',
+                                    data=json.dumps({'username': 'Archer'}))
+        self.assertTrue(response.status_code == 400)
 
     def test_registration_without_username(self):
         """test for user registration with no username provided."""
         response = self.client.post(
             '/auth/register/', data=json.dumps({'password': 'Sterling'}))
-        self.assertFalse(response.status_code == 400)
+        self.assertTrue(response.status_code == 400)
 
     def test_user_successful_login(self):
         response = self.client.post(
             '/auth/login/', data=json.dumps({
                 'username': 'lele', 'password': 'cats'}))
-        self.assertFalse(response.status_code == 200)
+        self.assertTrue(response.status_code == 200)
 
 
 class TestUserBucketListCreation(TestBase):
