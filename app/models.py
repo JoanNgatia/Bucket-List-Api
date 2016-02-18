@@ -13,7 +13,6 @@ from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
-from settings import DB_URI
 
 Base = declarative_base()
 
@@ -75,6 +74,6 @@ class BucketListItems(Base):
     bucket_id = Column(Integer, ForeignKey('bucketlist.list_id'))
 
 if __name__ == "__main__":
-    engine = create_engine(DB_URI)
+    engine = create_engine(os.environ.get('DATABASE_URL'))
     Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
