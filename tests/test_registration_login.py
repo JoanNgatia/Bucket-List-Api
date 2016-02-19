@@ -59,3 +59,26 @@ class SignUpViewTests(BaseTestCase):
                                                      'password': self.password}),
                                     content_type='application/json')
         self.assertEqual(response.status_code, 201)
+
+    def test_login_no_password(self):
+        """Test that a user cannot login without a password."""
+        response = self.client.post(url_for('login'),
+                                    data=json.dumps({'username': self.username}),
+                                    content_type='application/json')
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('Password missing', response.data)
+
+    def test_login_inexistent_user(self):
+        """Test that only registered users can login."""
+        dummyuser = fake.user_name()
+        response = self.client.post(url_for('login'),
+                                    data=json.dumps({'username': dummyuser,
+                                                     'password': self.password}),
+                                    content_type='application/json')
+        self.assertEqual(response.status_code, 404)
+        self.assertIn("User doesn't exist", response.data)
+
+    def test_logout(self):
+        """Test that a user successfully logs out."""
+        response = self.client.post(url_for('logout'))
+        self.assertEqual(response.status_code, 204)
