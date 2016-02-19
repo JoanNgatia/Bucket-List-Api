@@ -14,8 +14,9 @@ class TestingConfig(Config):
     """Testing configurations."""
 
     TESTING = True
-    DATABASE_URL = 'sqlite:///tests/test.db'
-    SERVER_NAME = 'http://localhost:5000/'
+    DEBUG = True
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
+    # SERVER_NAME = 'http://localhost:5000/'
 
 
 class DevelopmentConfig(Config):
