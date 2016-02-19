@@ -52,8 +52,8 @@ Possible API endpoints for use with this application can be found on this [Apiar
 1. Simply clone the repo by running ```git clone https://github.com/andela-jngatia/Bucket-List-Api.git```.
 2. Install dependencies as per the requirements.txt file within your virtual environment. ```pip install -r requirements.txt```.
 3. Initialize the databse skeleton by running ```python app/models.py```
-4. Create the database by running ```python main\manage.py db init ``` and make the migrations required by running
-```python main\manage.py db migrate```
+4. Create the database by running ```python main/manage.py db init ``` and make the migrations required by running
+```python main/manage.py db migrate```
 5. Access the API by running ```python manage.py runserver```
 6. Create bucketlists and update them as you wish using either the httpie option as discussed or using [Postman](https://www.getpostman.com/).
 
