@@ -3,8 +3,8 @@ import nose
 from flask.ext.testing import TestCase
 from config.config import TestingConfig
 
-from main.manage import app, db
-from app.database import session, init_db, Base
+from main.manage import app
+from app.database import session, init_db
 
 
 class BaseTestCase(TestCase):
@@ -18,15 +18,11 @@ class BaseTestCase(TestCase):
     def setUp(self):
         """setUp method"""
         self.app = app.test_client()
-        # db.create_all()
         init_db()
 
     def tearDown(self):
         """method for clearing all settings"""
         session.remove()
-        # Base.drop_all()
-        # Base.remove()
-        # Base.drop_all()
 
 if __name__ == '__main__':
     nose.run()

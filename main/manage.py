@@ -1,5 +1,5 @@
 import os
-
+from flask import g
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 from flask_restful import Api
@@ -56,7 +56,6 @@ def load_user(request):
     decorator is used
     """
     token = request.headers.get('token')
-
     if token:
         s = Serializer(os.environ.get('SECRET_KEY'))
         try:

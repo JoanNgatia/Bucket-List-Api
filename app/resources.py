@@ -58,7 +58,7 @@ class BucketListAll(Resource):
             paginate = Paginator(bucketlistget, limit)
             page_responses = paging(bucketlists, paginate, page)
             return page_responses, 200
-        return {'message': 'Please login to view your bucketlists'}, 400
+        return {'message': 'Please login to view your bucketlists'}, 401
 
     @login_required
     def post(self):

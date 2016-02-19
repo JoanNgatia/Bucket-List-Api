@@ -1,7 +1,6 @@
-
 from flask import url_for
 import json
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import generate_password_hash
 
 from test_base import BaseTestCase
 from app.models import User
@@ -23,6 +22,12 @@ class SignUpViewTests(BaseTestCase):
         self.user = User(username=self.username, password_hash=password_hash)
         session.add(self.user)
         session.commit()
+
+    def tearDown(self):
+        """Delete details created at end of test."""
+        del self.username
+        del self.password
+        del self.user
 
     def test_user_registration(self):
         """Test that creation of a user succeeds when correct info is sent."""
