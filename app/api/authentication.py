@@ -1,10 +1,10 @@
 """This files handles the authentication logic."""
 from flask import flash
-from flask.ext.restful import reqparse, Resource
+from flask_restful import reqparse, Resource
 from flask.ext.login import logout_user
 
 from app.models import User
-from app.db import session
+from app.database import session
 
 parser = reqparse.RequestParser()
 
@@ -21,16 +21,16 @@ class UserRegistration(Resource):
         username = args['username']
         password = args['password']
         exists = session.query(User).filter_by(username=username).first()
-        if exists and exists.username == username:
-            return {'message': 'User already exists!'}, 400
-        user = User(username=username)
-        if password:
+        if username and password:
+            if exists and exists.username == username:
+                return {'message': 'User already exists!'}, 400
+            user = User(username=username)
             user.hash_password(password)
             session.add(user)
             session.commit()
             return {'message': 'User {} has been successfully registered'
                                .format(username)}, 201
-        return {'message': 'Please include a password while registering'}, 400
+        return {'message': 'Missing fields!'}, 400
 
 
 class UserLogin(Resource):
@@ -45,15 +45,16 @@ class UserLogin(Resource):
         password_hash = args['password']
 
         userlogged = session.query(User).filter_by(username=username).first()
-
-        if not userlogged:
-            return {'message': "User doesn't exist"}, 404
-        if userlogged.verify_password(password_hash):
-            token = userlogged.generate_confirmation_token()
-            flash("user successfully logged in")
-            return {'token': token}, 201
-        # if password not verified
-        return {'message': 'Incorrect password.'}, 400
+        if password_hash:
+            if not userlogged:
+                return {'message': "User doesn't exist"}, 404
+            if userlogged.verify_password(password_hash):
+                token = userlogged.generate_confirmation_token()
+                flash("user successfully logged in")
+                return {'token': token}, 201
+            # if password not verified
+            return {'message': 'Incorrect password.'}, 400
+        return {'message': 'Password missing'}, 400
 
 
 class UserLogout(Resource):

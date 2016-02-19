@@ -1,5 +1,5 @@
 from flask import request
-from flask.ext.restful import reqparse, Resource, marshal
+from flask_restful import reqparse, Resource, marshal
 from flask.ext.login import login_required, current_user
 from werkzeug.exceptions import BadRequestKeyError
 
@@ -7,7 +7,7 @@ from sqlalchemy_paginator import Paginator
 from sqlalchemy_paginator.exceptions import EmptyPage
 
 from models import BucketList, BucketListItems
-from db import session
+from database import session
 from serializer import bucketlists
 
 

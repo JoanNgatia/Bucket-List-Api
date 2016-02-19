@@ -4,17 +4,17 @@ from flask.ext.login import UserMixin
 
 from sqlalchemy import Column, String, Integer, DateTime, \
     ForeignKey, Boolean, func
-from sqlalchemy.ext.declarative import declarative_base
+# from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
-from sqlalchemy import create_engine
+# from sqlalchemy import create_engine
 
 from datetime import datetime
 
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
-
-Base = declarative_base()
+from database import Base, init_db
+# Base = declarative_base()
 
 
 class User(Base, UserMixin):
@@ -74,6 +74,7 @@ class BucketListItems(Base):
     bucket_id = Column(Integer, ForeignKey('bucketlist.list_id'))
 
 if __name__ == "__main__":
-    engine = create_engine(os.environ.get('DATABASE_URL'))
-    Base.metadata.drop_all(engine)
-    Base.metadata.create_all(engine)
+    # engine = create_engine(os.environ.get('DATABASE_URL'))
+    # Base.metadata.drop_all(engine)
+    # Base.metadata.create_all(engine)
+    init_db()

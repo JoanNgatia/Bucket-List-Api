@@ -3,7 +3,7 @@
     be used by the marshal function.
 """
 
-from flask.ext.restful import fields
+from flask_restful import fields
 
 bucketlistitems = {
     'item_id': fields.Integer,
