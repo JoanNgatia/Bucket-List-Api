@@ -8,7 +8,7 @@ class Config(object):
     TESTING = True
     SECRET_KEY = os.environ['SECRET_KEY']
     DATABASE_URL = 'sqlite:///bucketlist.db'
-    if os.getenv('TRAVIS_BUILD', None):
+    if os.getenv('TRAVIS_BUILD'):
         SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
     else:
         SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
