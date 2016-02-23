@@ -64,7 +64,8 @@ class BucketListAll(Resource):
     @login_required
     def post(self):
         """Create a new bucketlist."""
-        parser.add_argument('list_name')
+        parser.add_argument('list_name', required=True,
+                            help='List name cannot be blank')
         args = parser.parse_args()
         list_name = args['list_name']
         bucketlistexist = session.query(BucketList).filter_by(
@@ -115,7 +116,8 @@ class BucketListId(Resource):
             BucketList).filter_by(list_id=list_id).first()
         session.delete(bucketlistdelete)
         session.commit()
-        return {'message': 'Bucketlist {} has been deleted'.format(list_id)}, 204
+        return {'message': 'Bucketlist {} has been deleted'
+                           .format(list_id)}, 204
 
 
 class BucketListItemAdd(Resource):
@@ -127,7 +129,7 @@ class BucketListItemAdd(Resource):
         bucketlistfind = session.query(
             BucketList).filter_by(list_id=list_id).first()
         if bucketlistfind:
-            parser.add_argument('item_name')
+            parser.add_argument('item_name', required=True)
             args = parser.parse_args()
             item = args['item_name']
             bucketlistitem = BucketListItems(
