@@ -25,7 +25,7 @@ class TestBucketLists(BaseTestCase):
         session.commit()
 
         # create a dummy bucketlist
-        self.list_name = fake.name()
+        self.list_name = 'Ein Schatz finden'
         self.bucketlist = BucketList(list_name=self.list_name,
                                      creator=self.user.user_id)
         session.add(self.bucketlist)
@@ -38,6 +38,15 @@ class TestBucketLists(BaseTestCase):
                                              'password': self.password}),
                                          content_type='application/json')
         self.token = json.loads(self.response.data)['token']
+
+    def tearDown(self):
+        """Delete details created at end of test."""
+        del self.username
+        del self.password
+        del self.user
+        del self.bucketlist
+        del self.token
+        session.remove()
 
     def test_unauthorized_bucketlist_methods(self):
         """Test unsuccessful bucketlist retrieval and  /
@@ -57,6 +66,7 @@ class TestBucketLists(BaseTestCase):
         response = self.client.post(url_for('bucketlists'), data=bucketlist1,
                                     headers={'token': self.token})
         self.assertEqual(response.status, '201 CREATED')
+        self.assertIn(bucketlist1['list_name'], response.data)
 
     def test_bucketlist_retrieval(self):
         """Test successful bucketlist retrieval."""
@@ -80,18 +90,15 @@ class TestBucketLists(BaseTestCase):
                                       headers={'token': self.token})
         self.assertEqual(response.status_code, 204)
 
-    # def test_bucketlist_update(self):
-    #     """Test that a user can update a particular bucketlist."""
-    #     newlist_name = fake.name()
-    #     bucketlist2 = {
-    #         'list_id': 220,
-    #         'list_name': fake.name()
-    #     }
-    #     url = '/bucketlists/{}/'.format(bucketlist2['list_id'])
-    #     import ipdb; ipdb.set_trace()
-    #     response = self.client.put(url,
-    #                                headers={'token': self.token},
-    #                                data=json.dumps({
-    #                                    'list_id': 220,
-    #                                    'list_name': newlist_name}))
-    #     self.assertEqual(response.status_code, 202)
+    def test_bucketlist_search_by_name(self):
+        """Test that a user can search for a bucketlist by its name."""
+        list_name = 'Ins Kino gehen'
+        bucketlist = BucketList(list_name=list_name,
+                                creator=self.user.user_id)
+        session.add(bucketlist)
+        session.commit()
+
+        response = self.client.get('/bucketlists/?q=Kino',
+                                   headers={'token': self.token})
+        self.assertIn('Kino', response.data)
+        self.assertEqual(response.status_code, 200)

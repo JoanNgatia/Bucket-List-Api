@@ -18,13 +18,13 @@ The features attached to the service include:
 * retrieving a list of all created bucket lists by a registered user.
 
 ## Accessing resources 
-httpie, the 'fresher' CLI client, can be used to access the different resources on the different routes.God old Postman, can also be used to test out the routes.
+httpie, the 'fresher' CLI client, can be used to access the different resources on the different routes.Good old Postman, can also be used to test out the routes.
 
 A sample request to log in user 'jo' with password 'w' is:
 
 ```http POST http://localhost:5000/auth/login/ username='jo' password='w'```
 
-A token is generated after this request.Hold on to it.You'll need it for access to bucketlists created by you.
+A token is generated after this request.Hold on to it.You'll need it for access to bucketlists that you will create.
 
 Simply attach the token to the request body for all routes that require login.
 An example of this is :
@@ -60,5 +60,5 @@ Possible API endpoints for use with this application can be found on this [Apiar
 
 ### Running tests
 1. Navigate to project directory.
-2. Run nosetests to test the system.
-3. Run nosetests --with-coverage to check coverage.
+2. Run `nosetests` to test the system.
+3. Run `nosetests --with-coverage` to check coverage.
