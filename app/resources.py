@@ -65,7 +65,7 @@ class BucketListAll(Resource):
     @login_required
     def post(self):
         """Create a new bucketlist."""
-        parser.add_argument('list_name', required=True,
+        parser.add_argument('list_name',
                             help='List name cannot be blank')
         args = parser.parse_args()
         list_name = args['list_name']
@@ -130,7 +130,7 @@ class BucketListItemAdd(Resource):
         bucketlistfind = session.query(
             BucketList).filter_by(list_id=list_id).first()
         if bucketlistfind:
-            parser.add_argument('item_name', required=True)
+            parser.add_argument('item_name')
             args = parser.parse_args()
             item = args['item_name']
             bucketlistitem = BucketListItems(
@@ -160,7 +160,7 @@ class BucketListItemEdit(Resource):
                 session.add(bucketlistitemupdate)
                 session.commit()
                 return {'message': 'Bucketlistitem {}  has been modified'
-                                   .format(item_id)}, 200
+                                   .format(item_id)}, 202
         return {'message': 'Bucketlist {} has not been found'
                 .format(item_id)}, 404
 
