@@ -4,6 +4,7 @@ python:
 
 before_install:
   - "pip install -r requirements.txt"
+  - cp .env.travis .env
 install:
   - "pip install coveralls"
 script:
@@ -12,6 +13,7 @@ after_success:
   - coveralls
 branches:
   only:
+  - chore-coderefactor
   - develop
   - master
 services:
