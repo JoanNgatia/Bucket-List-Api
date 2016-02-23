@@ -91,6 +91,14 @@ class TestBucketLists(BaseTestCase):
                                    headers={'token': self.token})
         self.assertEqual(response.status_code, 200)
 
+        # Test a user can update a particular bucketlist
+        name2 = {
+            'list_name': fake.name()
+        }
+        response = self.client.put(url, data=name2,
+                                   headers={'token': self.token})
+        self.assertEqual(response.status_code, 202)
+
         # Test a user can delete a particular bucketlist
         response = self.client.delete(url,
                                       headers={'token': self.token})
