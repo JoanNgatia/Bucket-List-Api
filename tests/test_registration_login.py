@@ -25,6 +25,7 @@ class SignUpViewTests(BaseTestCase):
 
     def tearDown(self):
         """Delete details created at end of test."""
+        session.close()
         del self.username
         del self.password
         del self.user
@@ -35,7 +36,8 @@ class SignUpViewTests(BaseTestCase):
         password = fake.password()
         response = self.client.post(url_for('register'),
                                     data=json.dumps({'username': username,
-                                                     'password': password}),
+                                                     'password': password}
+                                                    ),
                                     content_type='application/json')
         self.assertIn('User {} has been successfully registered'.
                       format(username), response.data)
