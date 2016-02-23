@@ -18,7 +18,7 @@ The features attached to the service include:
 * retrieving a list of all created bucket lists by a registered user.
 
 ## Accessing resources 
-httpie, the 'fresher' CLI client can be used to access the different resources on the different routes.
+httpie, the 'fresher' CLI client, can be used to access the different resources on the different routes.God old Postman, can also be used to test out the routes.
 
 A sample request to log in user 'jo' with password 'w' is:
 
