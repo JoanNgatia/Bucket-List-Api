@@ -51,13 +51,14 @@ class BucketListAll(Resource):
         if created_by:
             if q:
                 bucketlistget = session.query(BucketList).filter_by(
-                    creator=created_by).filter(BucketList.list_name.contains(q))
+                    creator=created_by).filter(
+                        BucketList.list_name.contains(q))
             else:
                 bucketlistget = session.query(BucketList).filter_by(
                     creator=created_by)
             paginate = Paginator(bucketlistget, limit)
             page_responses = paging(bucketlists, paginate, page)
-            return page_responses, 200
+            return page_responses
         return {'message': 'Please login to view your bucketlists'}, 401
 
     @login_required
@@ -172,3 +173,5 @@ class BucketListItemEdit(Resource):
             session.commit()
             return {'message': 'BucketlistItem {} has been deleted'
                                .format(item_id)}, 204
+        return {'message': 'Bucketlistitem {} could not be found'
+                           .format(item_id)}, 404
