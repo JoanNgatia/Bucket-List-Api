@@ -1,4 +1,4 @@
-from flask import url_for, g
+from flask import url_for
 import json
 from werkzeug.security import generate_password_hash
 
@@ -69,6 +69,12 @@ class TestBucketLists(BaseTestCase):
         self.assertEqual(response.status, '201 CREATED')
         self.assertIn(bucketlist1['list_name'], response.data)
 
+        # test that a user cannot create two bucketlists with similar names
+        response = self.client.post(url_for('bucketlists'),
+                                    data=bucketlist1,
+                                    headers={'token': self.token})
+        self.assertIn('Bucketlist  already exists', response.data)
+
     def test_bucketlist_retrieval(self):
         """Test successful bucketlist retrieval."""
         response = self.client.get(url_for('bucketlists'),
@@ -76,9 +82,8 @@ class TestBucketLists(BaseTestCase):
         self.assertEqual(response.status, '200 OK')
         self.assertIn(self.list_name, response.data)
 
-    def test_bucketlist_manipulation_by_id(self):
+    def test_bucketlist_manipulation(self):
         """Test that a user can get or delete a specific bucketlist."""
-
         url = '/bucketlists/{}/'.format(self.bucketlist.list_id)
 
         # Test user can get bucketlist by ID
@@ -102,4 +107,12 @@ class TestBucketLists(BaseTestCase):
         response = self.client.get('/bucketlists/?q=Kino',
                                    headers={'token': self.token})
         self.assertIn('Kino', response.data)
+        self.assertEqual(response.status_code, 200)
+
+    def test_bucketlist_paginate(self):
+        """Test that a user can set a limit of bucketlists to view."""
+        response = self.client.get('/bucketlists/?limit=5',
+                                   headers={'token': self.token})
+        item_dict = json.loads(response.data)
+        self.assertLessEqual(len(item_dict), 5)
         self.assertEqual(response.status_code, 200)
