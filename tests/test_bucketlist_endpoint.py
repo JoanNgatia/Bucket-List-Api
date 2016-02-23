@@ -63,6 +63,7 @@ class TestBucketLists(BaseTestCase):
             'list_name': fake.name()
         }
 
+        # post a new bucketlist item and confirm its name
         response = self.client.post(url_for('bucketlists'), data=bucketlist1,
                                     headers={'token': self.token})
         self.assertEqual(response.status, '201 CREATED')
