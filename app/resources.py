@@ -35,6 +35,7 @@ class BucketListAll(Resource):
     @login_required
     def get(self, page=1):
         """Retrieve all bucketlists belonging to the logged in user.
+
         limit specifies the maximum number of results with default set to 20.
         q specifies the term to search by through the bucketlists
         """
