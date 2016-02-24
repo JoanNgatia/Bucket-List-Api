@@ -5,6 +5,8 @@
 
 [![Build Status](https://travis-ci.org/andela-jngatia/Bucket-List-Api.svg?branch=develop)](https://travis-ci.org/andela-jngatia/Bucket-List-Api)
 
+[![Coverage Status](https://coveralls.io/repos/github/andela-jngatia/Bucket-List-Api/badge.svg?branch=develop)](https://coveralls.io/github/andela-jngatia/Bucket-List-Api?branch=develop)
+
 # BUCKETLIST API
 This is a bucket list API built on [Flask](http://flask.pocoo.org/).
 
