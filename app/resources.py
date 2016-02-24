@@ -33,7 +33,7 @@ def _get_bucketlist(list_id):
     bucketlist = session.query(BucketList).filter_by(
         list_id=list_id, creator=created_by).first()
     if not bucketlist:
-        return {'message': 'Bucketlist could not be found.'}
+        raise NoResultFound
     return bucketlist
 
 
@@ -42,7 +42,7 @@ def _get_bucketlist_item(item_id):
     bucketlistitem = session.query(
         BucketListItems).filter_by(item_id=item_id).first()
     if not bucketlistitem:
-        return {'message': 'Bucketlist could not be found.'}
+        raise NoResultFound
     return bucketlistitem
 
 
@@ -155,8 +155,8 @@ class BucketListItemAdd(Resource):
     @login_required
     def post(self, list_id):
         """Add a new item to a bucketlist."""
-        bucketlist = _get_bucketlist(list_id)
-        if bucketlist:
+        try:
+            bucketlist = _get_bucketlist(list_id)
             parser.add_argument('item_name')
             arg = parser.parse_args()
             if arg['item_name']:
@@ -167,9 +167,10 @@ class BucketListItemAdd(Resource):
                 item_name=item, bucket_id=list_id)
             session.add(bucketlistitem)
             session.commit()
-            return {'message': '{} has been added to Bucketlist {}'
+            return {'message': '{0} has been added to Bucketlist {1}'
                                .format(item, list_id)}, 201
-        return {'message': 'Bucketlist does not exist'
+        except NoResultFound:
+            return {'message': 'Bucketlist does not exist'
                            .format(list_id)}, 404
 
 
@@ -179,8 +180,8 @@ class BucketListItemEdit(Resource):
     @login_required
     def put(self, list_id, item_id):
         """Update an existing bucketlist item."""
-        bucketlist = _get_bucketlist(list_id)
-        if bucketlist:
+        try:
+            bucketlist = _get_bucketlist(list_id)
             bucketlistitem = _get_bucketlist_item(item_id)
             parser.add_argument('item_name')
             parser.add_argument('done')
@@ -189,13 +190,14 @@ class BucketListItemEdit(Resource):
                 bucketlistitem.item_name = arg['item_name']
             if arg['done']:
                 bucketlistitem.done = arg['done']
-            else:
+            if not arg['item_name'] and not arg['done']:
                 return {'message': 'Invalid value passed.'}
             session.add(bucketlistitem)
             session.commit()
             return {'message': 'Bucketlistitem {}  has been modified'
                                .format(item_id)}, 202
-        return {'message': 'Bucketlist {} has not been found'
+        except NoResultFound:
+            return {'message': 'Bucketlist {} has not been found'
                            .format(list_id)}, 404
 
     @login_required

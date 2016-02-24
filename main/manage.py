@@ -36,7 +36,11 @@ def create_app(config_type):
     db.init_app(app)
     return app
 
-app = create_app('default')
+if os.getenv('TRAVIS_BUILD'):
+    app = create_app('testing')
+else:
+    app = create_app('default')
+
 api = Api(app)
 
 migrate = Migrate(app, db)
