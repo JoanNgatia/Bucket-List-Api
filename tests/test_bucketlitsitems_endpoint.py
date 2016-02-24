@@ -66,7 +66,7 @@ class TestBucketLists(BaseTestCase):
                          headers={'token': self.token})
 
         bucketlist = session.query(BucketList).first()
-        url = '/bucketlist/{}/item/'.format(bucketlist.list_id)
+        url = '/bucketlists/{}/items/'.format(bucketlist.list_id)
 
         # Test unsuccesful unauthorized creation
         response = self.client.post(url)
@@ -85,7 +85,7 @@ class TestBucketLists(BaseTestCase):
         """Test bucketlist edition and deletion methods."""
         bucketlist = session.query(BucketList).first()
         bucketlistitem = session.query(BucketListItems).first()
-        url = '/bucketlist/{}/item/{}/'.format(bucketlist.list_id,
+        url = '/bucketlists/{}/items/{}/'.format(bucketlist.list_id,
                                                bucketlistitem.item_id)
 
         # Test unauthorized edition
@@ -102,7 +102,7 @@ class TestBucketLists(BaseTestCase):
         }
         response = self.client.put(url, data=item2,
                                    headers={'token': self.token})
-        self.assertEqual(response.status_code, 202)
+        self.assertEqual(response.status_code, 200)
 
         # Test successful item delete
         response = self.client.delete(url, headers={'token': self.token})

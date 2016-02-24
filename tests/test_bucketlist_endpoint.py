@@ -102,7 +102,7 @@ class TestBucketLists(BaseTestCase):
         # Test a user can delete a particular bucketlist
         response = self.client.delete(url,
                                       headers={'token': self.token})
-        self.assertEqual(response.status_code, 204)
+        self.assertEqual(response.status_code, 200)
 
     def test_bucketlist_search_by_name(self):
         """Test that a user can search for a bucketlist by its name."""
