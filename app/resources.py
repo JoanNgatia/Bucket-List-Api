@@ -3,6 +3,7 @@ from flask_restful import reqparse, Resource, marshal
 from flask.ext.login import login_required, current_user
 from werkzeug.exceptions import BadRequestKeyError
 
+from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy_paginator import Paginator
 from sqlalchemy_paginator.exceptions import EmptyPage
 
@@ -24,6 +25,25 @@ def paging(fields, paginator, page):
         return marshal(paginator.page(page).object_list, fields), 200
     except EmptyPage:
         return {'message': "Page doesn't exist"}, 404
+
+
+def _get_bucketlist(list_id):
+    """Check that the bucketlist belongs to current user."""
+    created_by = current_user.user_id
+    bucketlist = session.query(BucketList).filter_by(
+        list_id=list_id, creator=created_by).first()
+    if not bucketlist:
+        return {'message': 'Bucketlist could not be found.'}
+    return bucketlist
+
+
+def _get_bucketlist_item(item_id):
+    """Check that a bucketlist item exists."""
+    bucketlistitem = session.query(
+        BucketListItems).filter_by(item_id=item_id).first()
+    if not bucketlistitem:
+        return {'message': 'Bucketlist could not be found.'}
+    return bucketlistitem
 
 
 class BucketListAll(Resource):
@@ -67,11 +87,14 @@ class BucketListAll(Resource):
         """Create a new bucketlist."""
         parser.add_argument('list_name',
                             help='List name cannot be blank')
-        args = parser.parse_args()
-        list_name = args['list_name']
-        bucketlistexist = session.query(BucketList).filter_by(
-            list_name=list_name).first()
+        arg = parser.parse_args()
+        if arg['list_name']:
+            list_name = arg['list_name']
+        else:
+            return {'message': 'Invalid value passed.'}
         created_by = current_user.user_id
+        bucketlistexist = session.query(BucketList).filter_by(
+            list_name=list_name, creator=created_by).first()
         if bucketlistexist:
             return {'message': 'Bucketlist  already exists'}, 400
         else:
@@ -87,59 +110,67 @@ class BucketListId(Resource):
     @login_required
     def get(self, list_id):
         """Retrieve a particular bucketlist belonging to logged in user."""
-        bucketlist = session.query(BucketList).filter_by(
-            list_id=list_id).first()
-        if bucketlist:
+        try:
+            bucketlist = _get_bucketlist(list_id)
             return marshal(bucketlist, bucketlists), 200
-
-        return {'message': 'Bucketlist {} does not exist'.format(list_id)}, 404
+        except NoResultFound:
+            return {'message': 'Bucketlist {} not found'.format(list_id)}, 404
 
     @login_required
     def put(self, list_id):
         """Modify existing bucketlist."""
-        bucketlistedit = session.query(
-            BucketList).filter_by(list_id=list_id).first()
-        if bucketlistedit:
+        try:
+            bucketlist = _get_bucketlist(list_id)
             parser.add_argument('list_name')
-            args = parser.parse_args()
-            bucketlistedit.list_name = args['list_name']
-            session.add(bucketlistedit)
+            arg = parser.parse_args()
+            if arg['list_name']:
+                bucketlist.list_name = arg['list_name']
+            else:
+                return {'message': 'Invalid value passed.'}
+            session.add(bucketlist)
             session.commit()
             return {'message': 'Bucketlist {} has been modified'
                                .format(list_id)}, 202
-        return {'message': 'Bucketlist {} has not been found'
-                .format(list_id)}, 404
+        except NoResultFound:
+            return {'message': 'Bucketlist {} has not been found'
+                               .format(list_id)}, 404
 
     @login_required
     def delete(self, list_id):
         """Delete an existing bucketlist."""
-        bucketlistdelete = session.query(
-            BucketList).filter_by(list_id=list_id).first()
-        session.delete(bucketlistdelete)
-        session.commit()
-        return {'message': 'Bucketlist {} has been deleted'
-                           .format(list_id)}, 204
+        try:
+            bucketlist = _get_bucketlist(list_id)
+            session.delete(bucketlist)
+            session.commit()
+            return {'message': 'Bucketlist {} has been deleted'
+                               .format(list_id)}, 200
+        except NoResultFound:
+            return {'message': 'Bucketlist {} has not been found'
+                               .format(list_id)}, 404
 
 
 class BucketListItemAdd(Resource):
-    """Resource to handle '/bucketlist/<list_id>/item/'."""
+    """Resource to handle '/bucketlists/<list_id>/items/'."""
 
     @login_required
     def post(self, list_id):
         """Add a new item to a bucketlist."""
-        bucketlistfind = session.query(
-            BucketList).filter_by(list_id=list_id).first()
-        if bucketlistfind:
+        bucketlist = _get_bucketlist(list_id)
+        if bucketlist:
             parser.add_argument('item_name')
-            args = parser.parse_args()
-            item = args['item_name']
+            arg = parser.parse_args()
+            if arg['item_name']:
+                item = arg['item_name']
+            else:
+                return {'message': 'Invalid value passed.'}
             bucketlistitem = BucketListItems(
-                item_name=item, bucket_id=bucketlistfind.list_id)
+                item_name=item, bucket_id=list_id)
             session.add(bucketlistitem)
             session.commit()
             return {'message': '{} has been added to Bucketlist {}'
                                .format(item, list_id)}, 201
-        return {'message': 'Bucketlist does not exist'.format(list_id)}, 404
+        return {'message': 'Bucketlist does not exist'
+                           .format(list_id)}, 404
 
 
 class BucketListItemEdit(Resource):
@@ -148,31 +179,32 @@ class BucketListItemEdit(Resource):
     @login_required
     def put(self, list_id, item_id):
         """Update an existing bucketlist item."""
-        bucketlistfind = session.query(
-            BucketList).filter_by(list_id=list_id).first()
-        if bucketlistfind:
-            bucketlistitemupdate = session.query(
-                BucketListItems).filter_by(item_id=item_id).first()
-            if bucketlistitemupdate:
-                parser.add_argument('item_name')
-                args = parser.parse_args()
-                bucketlistitemupdate.item_name = args['item_name']
-                session.add(bucketlistitemupdate)
-                session.commit()
-                return {'message': 'Bucketlistitem {}  has been modified'
-                                   .format(item_id)}, 202
+        bucketlist = _get_bucketlist(list_id)
+        if bucketlist:
+            bucketlistitem = _get_bucketlist_item(item_id)
+            parser.add_argument('item_name')
+            parser.add_argument('done')
+            arg = parser.parse_args()
+            if arg['item_name']:
+                bucketlistitem.item_name = arg['item_name']
+            if arg['done']:
+                bucketlistitem.done = arg['done']
+            else:
+                return {'message': 'Invalid value passed.'}
+            session.add(bucketlistitem)
+            session.commit()
+            return {'message': 'Bucketlistitem {}  has been modified'
+                               .format(item_id)}, 202
         return {'message': 'Bucketlist {} has not been found'
-                .format(item_id)}, 404
+                           .format(list_id)}, 404
 
     @login_required
     def delete(self, list_id, item_id):
         """Delete an item form an existing bucketlist."""
-        bucketlistfind = session.query(
-            BucketList).filter_by(list_id=list_id).first()
-        if bucketlistfind:
-            bucketlistitemdelete = session.query(
-                BucketListItems).filter_by(item_id=item_id).first()
-            session.delete(bucketlistitemdelete)
+        bucketlist = _get_bucketlist(list_id)
+        if bucketlist:
+            bucketlistitem = _get_bucketlist_item(item_id)
+            session.delete(bucketlistitem)
             session.commit()
             return {'message': 'BucketlistItem {} has been deleted'
                                .format(item_id)}, 204
