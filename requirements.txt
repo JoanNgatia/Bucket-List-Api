@@ -40,5 +40,3 @@ traitlets==4.1.0
 Werkzeug==0.11.3
 wheel==0.24.0
 Factory==1.2
-fake-factory==0.5.3
-Faker==0.0.4
