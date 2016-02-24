@@ -74,10 +74,10 @@ api.add_resource(UserLogout, '/auth/logout/', endpoint='logout')
 api.add_resource(BucketListAll, '/bucketlists/', endpoint='bucketlists')
 api.add_resource(BucketListId, '/bucketlists/<list_id>/',
                  endpoint='single_bucketlist')
-api.add_resource(BucketListItemAdd, '/bucketlist/<list_id>/item/',
+api.add_resource(BucketListItemAdd, '/bucketlists/<list_id>/items/',
                  endpoint='bucketlistitems')
 api.add_resource(
-    BucketListItemEdit, '/bucketlist/<list_id>/item/<item_id>/',
+    BucketListItemEdit, '/bucketlists/<list_id>/items/<item_id>/',
     endpoint='single_bucketlistitem')
 
 if __name__ == '__main__':
