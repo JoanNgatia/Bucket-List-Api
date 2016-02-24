@@ -10,7 +10,7 @@ class TestUserAuthentication(unittest.TestCase):
     """
 
     def test_password_setter(self):
-        """.Check password setting."""
+        """Check password setting."""
         u = User(password_hash='cat')
         self.assertTrue(u.password_hash is not None)
 

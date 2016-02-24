@@ -77,7 +77,7 @@ class TestBucketLists(BaseTestCase):
                                     data=item,
                                     headers={'token': self.token})
         self.assertEqual(response.status_code, 201)
-        self.assertIn('{} has been added to Bucketlist {}'
+        self.assertIn('{0} has been added to Bucketlist {1}'
                       .format(item['item_name'], bucketlist.list_id),
                       response.data)
 
@@ -85,8 +85,8 @@ class TestBucketLists(BaseTestCase):
         """Test bucketlist edition and deletion methods."""
         bucketlist = session.query(BucketList).first()
         bucketlistitem = session.query(BucketListItems).first()
-        url = '/bucketlists/{}/items/{}/'.format(bucketlist.list_id,
-                                               bucketlistitem.item_id)
+        url = '/bucketlists/{0}/items/{1}/'.format(bucketlist.list_id,
+                                                   bucketlistitem.item_id)
 
         # Test unauthorized edition
         response = self.client.put(url)

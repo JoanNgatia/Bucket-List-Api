@@ -46,6 +46,7 @@ class TestBucketLists(BaseTestCase):
         del self.user
         del self.bucketlist
         del self.token
+        session.rollback()
         session.remove()
 
     def test_unauthorized_bucketlist_methods(self):
