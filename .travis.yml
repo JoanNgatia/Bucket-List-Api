@@ -5,8 +5,11 @@ before_install:
   - "pip install -r requirements.txt"
 install:
   - "pip install coveralls"
-script:
+before_script:
+  - python app/models.py
+  - python main/manage.py db init
   - python main/manage.py db migrate
+script:
   - nosetests --with-coverage
 after_success:
   - coveralls
