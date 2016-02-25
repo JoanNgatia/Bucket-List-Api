@@ -9,7 +9,6 @@ class Config(object):
     TESTING = True
     SECRET_KEY = os.environ['SECRET_KEY']
     DATABASE_URL = 'sqlite:///:memory:'
-    SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
 
 
 class TestingConfig(Config):
