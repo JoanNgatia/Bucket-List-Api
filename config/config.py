@@ -1,4 +1,5 @@
 import os
+import tempfile
 
 
 class Config(object):
@@ -7,7 +8,7 @@ class Config(object):
     DEBUG = True
     TESTING = True
     SECRET_KEY = os.environ['SECRET_KEY']
-    DATABASE_URL = 'sqlite:///bucketlist.db'
+    DATABASE_URL = 'sqlite:///:memory:'
     SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
 
 
@@ -16,8 +17,8 @@ class TestingConfig(Config):
 
     TESTING = True
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
-    DATABASE_URL = 'sqlite:///test.db'
+    DATABASE = tempfile.mktemp()
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(DATABASE)
     SECRET_KEY = os.environ['SECRET_KEY']
 
 
