@@ -6,6 +6,7 @@ before_install:
 install:
   - "pip install coveralls"
 script:
+  - python main/manage.py db migrate
   - nosetests --with-coverage
 after_success:
   - coveralls
