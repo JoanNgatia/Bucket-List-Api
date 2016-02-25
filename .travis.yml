@@ -3,7 +3,6 @@ python:
   - "2.7"
 before_install:
   - "pip install -r requirements.txt"
-  - cp .env.travis .env
 install:
   - "pip install coveralls"
 script:
