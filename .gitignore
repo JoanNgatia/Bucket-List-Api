@@ -9,6 +9,4 @@ htmlcov/
 nosetests.xml
 coverage.xml
 *.db
-env
-.env
 .pyc
