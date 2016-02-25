@@ -8,7 +8,6 @@ install:
 before_script:
   - export PYTHONPATH=.
   - python app/models.py
-  - python main/manage.py db init
   - python main/manage.py db migrate
 script:
   - nosetests --with-coverage
