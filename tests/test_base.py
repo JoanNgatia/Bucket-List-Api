@@ -18,12 +18,13 @@ class BaseTestCase(TestCase):
     def setUp(self):
         """Setup flask app for testing."""
         self.app = app.test_client()
-        db.drop_all()
         db.create_all()
 
     def tearDown(self):
         """Method for clearing all settings."""
-        db.session.close()
+        with app.app_context():
+            db.session.remove()
+            db.drop_all()
 
 if __name__ == '__main__':
     nose.run()

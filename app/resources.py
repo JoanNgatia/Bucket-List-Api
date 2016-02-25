@@ -164,14 +164,14 @@ class BucketListItemAdd(Resource):
             else:
                 return {'message': 'Invalid value passed.'}
             bucketlistitem = BucketListItems(
-                item_name=item, bucket_id=list_id)
+                item_name=item, bucket_id=bucketlist.list_id)
             session.add(bucketlistitem)
             session.commit()
             return {'message': '{0} has been added to Bucketlist {1}'
                                .format(item, list_id)}, 201
         except NoResultFound:
             return {'message': 'Bucketlist does not exist'
-                           .format(list_id)}, 404
+                               .format(list_id)}, 404
 
 
 class BucketListItemEdit(Resource):
@@ -198,7 +198,7 @@ class BucketListItemEdit(Resource):
                                .format(item_id)}, 202
         except NoResultFound:
             return {'message': 'Bucketlist {} has not been found'
-                           .format(list_id)}, 404
+                               .format(list_id)}, 404
 
     @login_required
     def delete(self, list_id, item_id):

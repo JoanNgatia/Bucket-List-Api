@@ -70,5 +70,14 @@ class BucketListItems(Base):
     done = Column(Boolean, default=False)
     bucket_id = Column(Integer, ForeignKey('bucketlist.list_id'))
 
+    def update(self, **kwargs):
+        """Validate values passed on update of bucketlistitems."""
+        self.item_name = kwargs.get('item_name')
+        if kwargs.get('done') == 'True' or kwargs.get('done') == 'true' or \
+                kwargs.get('done') == "1":
+            self.done = True
+        else:
+            self.done = False
+
 if __name__ == "__main__":
     init_db()

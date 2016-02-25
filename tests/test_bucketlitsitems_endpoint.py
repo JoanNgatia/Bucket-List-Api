@@ -47,12 +47,12 @@ class TestBucketLists(BaseTestCase):
                                          content_type='application/json')
         self.token = json.loads(self.response.data)['token']
 
-    def tearDown(self):
-        """Clean up test db after testing."""
-        session.remove()
-        del self.bucketlist
-        del self.bucketlistitem
-        del self.user
+    # def tearDown(self):
+    #     """Clean up test db after testing."""
+    #     session.remove()
+    #     del self.bucketlist
+    #     del self.bucketlistitem
+    #     del self.user
 
     def test_bucketlist_item_creation(self):
         """Test bucketlist items creation."""
@@ -65,8 +65,8 @@ class TestBucketLists(BaseTestCase):
         self.client.post(url_for('bucketlists'), data=bucketlist1,
                          headers={'token': self.token})
 
-        bucketlist = session.query(BucketList).first()
-        url = '/bucketlists/{}/items/'.format(bucketlist.list_id)
+        bucketlist = self.bucketlist
+        url = '/bucketlists/{}/items/'.format(self.bucketlist.list_id)
 
         # Test unsuccesful unauthorized creation
         response = self.client.post(url)
@@ -83,16 +83,17 @@ class TestBucketLists(BaseTestCase):
 
     def test_bucketlist_item_edition(self):
         """Test bucketlist edition and deletion methods."""
-        bucketlist = session.query(BucketList).first()
-        bucketlistitem = session.query(BucketListItems).first()
+        bucketlist = self.bucketlist
+        bucketlistitem = self.bucketlistitem
         url = '/bucketlists/{0}/items/{1}/'.format(bucketlist.list_id,
                                                    bucketlistitem.item_id)
+        url2 = '/bucketlists/{}/'.format(bucketlist.list_id)
 
         # Test unauthorized edition
         response = self.client.put(url)
         self.assertEqual(response.status_code, 401)
 
-        # Test unsauthorized deletion
+        # Test unauthorized deletion
         response = self.client.delete(url)
         self.assertEqual(response.status_code, 401)
 
@@ -102,7 +103,9 @@ class TestBucketLists(BaseTestCase):
         }
         response = self.client.put(url, data=item2,
                                    headers={'token': self.token})
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 202)
+        response2 = self.client.get(url2, headers={'token': self.token})
+        self.assertIn(item2['item_name'], response2.data)
 
         # Test successful item delete
         response = self.client.delete(url, headers={'token': self.token})

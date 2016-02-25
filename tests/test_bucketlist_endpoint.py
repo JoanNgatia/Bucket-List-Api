@@ -39,15 +39,15 @@ class TestBucketLists(BaseTestCase):
                                          content_type='application/json')
         self.token = json.loads(self.response.data)['token']
 
-    def tearDown(self):
-        """Delete details created at end of test."""
-        del self.username
-        del self.password
-        del self.user
-        del self.bucketlist
-        del self.token
-        session.rollback()
-        session.remove()
+    # def tearDown(self):
+    #     """Delete details created at end of test."""
+    #     del self.username
+    #     del self.password
+    #     del self.user
+    #     del self.bucketlist
+    #     del self.token
+    #     session.rollback()
+    #     session.remove()
 
     def test_unauthorized_bucketlist_methods(self):
         """Test unsuccessful bucketlist retrieval and  /

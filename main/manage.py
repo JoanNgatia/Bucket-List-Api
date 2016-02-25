@@ -36,6 +36,7 @@ def create_app(config_type):
     db.init_app(app)
     return app
 
+
 if os.getenv('TRAVIS_BUILD'):
     app = create_app('testing')
 else:
