@@ -50,7 +50,7 @@ class TestBucketLists(BaseTestCase):
         response = self.client.post(url_for('bucketlists'))
         self.assertEqual(response.status_code, 401)
 
-        # Test that a user can only access bucketlists that they create.
+        # Test that a user can only access/edit bucketlists that they create.
         bucketlist = session.query(BucketList).first()
         url2 = '/bucketlists/{}/'.format(bucketlist.list_id)
         response = self.client.get(url2,

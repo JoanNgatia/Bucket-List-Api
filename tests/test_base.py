@@ -4,7 +4,7 @@ from flask.ext.testing import TestCase
 from config.config import TestingConfig
 
 from main.manage import app, db
-# from app.database import session, init_db, Base
+from app.database import init_db
 
 
 class BaseTestCase(TestCase):
@@ -18,7 +18,7 @@ class BaseTestCase(TestCase):
     def setUp(self):
         """Setup flask app for testing."""
         self.app = app.test_client()
-        db.create_all()
+        init_db()
 
     def tearDown(self):
         """Method for clearing all settings."""

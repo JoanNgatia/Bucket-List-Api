@@ -47,13 +47,6 @@ class TestBucketLists(BaseTestCase):
                                          content_type='application/json')
         self.token = json.loads(self.response.data)['token']
 
-    # def tearDown(self):
-    #     """Clean up test db after testing."""
-    #     session.remove()
-    #     del self.bucketlist
-    #     del self.bucketlistitem
-    #     del self.user
-
     def test_bucketlist_item_creation(self):
         """Test bucketlist items creation."""
         bucketlist1 = {
@@ -81,6 +74,13 @@ class TestBucketLists(BaseTestCase):
                       .format(item['item_name'], bucketlist.list_id),
                       response.data)
 
+        # Test that a user passes valid field types on creation
+        response2 = self.client.post(url,
+                                     data=json.dumps({
+                                         'list_type': fake.name()}),
+                                     headers={'token': self.token})
+        self.assertIn('Invalid value passed.', response2.data)
+
     def test_bucketlist_item_edition(self):
         """Test bucketlist edition and deletion methods."""
         bucketlist = self.bucketlist
@@ -106,6 +106,13 @@ class TestBucketLists(BaseTestCase):
         self.assertEqual(response.status_code, 202)
         response2 = self.client.get(url2, headers={'token': self.token})
         self.assertIn(item2['item_name'], response2.data)
+
+        # Test that a user passes valid field types on edition
+        response3 = self.client.put(url2,
+                                    data=json.dumps({
+                                        'list_type': fake.name()}),
+                                    headers={'token': self.token})
+        self.assertIn('Invalid value passed.', response3.data)
 
         # Test successful item delete
         response = self.client.delete(url, headers={'token': self.token})
