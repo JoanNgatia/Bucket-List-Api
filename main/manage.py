@@ -38,7 +38,7 @@ def create_app(config_type):
 
 
 if os.getenv('TRAVIS'):
-    app = create_app('testing')
+    app = create_app(os.environ.get('travis'))
 else:
     app = create_app('default')
 
