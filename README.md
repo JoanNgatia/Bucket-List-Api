@@ -7,6 +7,8 @@
 
 [![Coverage Status](https://coveralls.io/repos/github/andela-jngatia/Bucket-List-Api/badge.svg?branch=develop)](https://coveralls.io/github/andela-jngatia/Bucket-List-Api?branch=develop)
 
+[![Circle CI](https://circleci.com/gh/andela-jngatia/Bucket-List-Api.svg?style=svg)](https://circleci.com/gh/andela-jngatia/Bucket-List-Api)
+
 # BUCKETLIST API
 This is a bucket list API built on [Flask](http://flask.pocoo.org/).
 
