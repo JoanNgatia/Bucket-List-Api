@@ -131,4 +131,4 @@ class TestBucketLists(BaseTestCase):
                                    data=json.dumps({
                                        'list_type': fake.name()}),
                                    headers={'token': self.token})
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 404)
