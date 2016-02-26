@@ -117,3 +117,16 @@ class TestBucketLists(BaseTestCase):
         # Test successful item delete
         response = self.client.delete(url, headers={'token': self.token})
         self.assertEqual(response.status_code, 204)
+
+    def test_bucketlist_access_control(self):
+        """Test access to bucketlists and items only by creator."""
+        bucketlist = session.query(BucketList).first()
+        bucketlistitem = session.query(BucketListItems).first()
+        url = '/bucketlists/{0}/items/{1}/'.format(bucketlist.list_id,
+                                                   bucketlistitem.item_id)
+
+        response = self.client.put(url,
+                                   data=json.dumps({
+                                       'list_type': fake.name()}),
+                                   headers={'token': self.token})
+        self.assertEqual(response.status_code, 404)

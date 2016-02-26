@@ -1,5 +1,4 @@
 import os
-import tempfile
 
 
 class Config(object):
@@ -16,8 +15,7 @@ class TestingConfig(Config):
 
     TESTING = True
     DEBUG = True
-    DATABASE = tempfile.mktemp()
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(DATABASE)
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
     SECRET_KEY = os.environ['SECRET_KEY']
 
 
