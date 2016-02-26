@@ -6,8 +6,6 @@ from sqlalchemy import Column, String, Integer, DateTime, \
     ForeignKey, Boolean, func
 from sqlalchemy.orm import relationship
 
-from datetime import datetime
-
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
@@ -49,15 +47,6 @@ class BucketList(Base):
     date_created = Column(DateTime, default=func.now())
     date_modified = Column(DateTime, default=func.now(), onupdate=func.now())
 
-    def create(self):
-        """Instantiate bucketlist at creation."""
-        self.creator = User.user_id
-        self.date_created = datetime.now()
-
-    def modify(self):
-        """Instantiate modification to bucketlist."""
-        self.date_modified = datetime.now()
-
 
 class BucketListItems(Base):
     """Map table for specific bucketlist items."""
@@ -69,15 +58,6 @@ class BucketListItems(Base):
     date_modified = Column(DateTime, default=func.now(), onupdate=func.now())
     done = Column(Boolean, default=False)
     bucket_id = Column(Integer, ForeignKey('bucketlist.list_id'))
-
-    def update(self, **kwargs):
-        """Validate values passed on update of bucketlistitems."""
-        self.item_name = kwargs.get('item_name')
-        if kwargs.get('done') == 'True' or kwargs.get('done') == 'true' or \
-                kwargs.get('done') == "1":
-            self.done = True
-        else:
-            self.done = False
 
 if __name__ == "__main__":
     init_db()
