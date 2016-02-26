@@ -1,3 +1,9 @@
+"""
+This file creates the models for use in defining the database.
+
+Each model represents a table within the database as well as
+the relationships between different tables.
+"""
 import os
 
 from flask.ext.login import UserMixin

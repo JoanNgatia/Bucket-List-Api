@@ -1,3 +1,5 @@
+"""This testcase covers all routes to the User resource."""
+
 from flask import url_for
 import json
 from werkzeug.security import generate_password_hash

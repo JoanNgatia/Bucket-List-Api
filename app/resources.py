@@ -1,3 +1,7 @@
+"""
+This module uses Flask-Restful to gives the resources
+access to HTTP methods.
+"""
 from flask import request
 from flask_restful import reqparse, Resource, marshal
 from flask.ext.login import login_required, current_user
@@ -37,10 +41,10 @@ def _get_bucketlist(list_id):
     return bucketlist
 
 
-def _get_bucketlist_item(item_id):
+def _get_bucketlist_item(item_id, list_id):
     """Check that a bucketlist item exists."""
     bucketlistitem = session.query(
-        BucketListItems).filter_by(item_id=item_id).first()
+        BucketListItems).filter_by(item_id=item_id, bucket_id=list_id).first()
     if not bucketlistitem:
         raise NoResultFound
     return bucketlistitem
@@ -181,8 +185,7 @@ class BucketListItemEdit(Resource):
     def put(self, list_id, item_id):
         """Update an existing bucketlist item."""
         try:
-            bucketlist = _get_bucketlist(list_id)
-            bucketlistitem = _get_bucketlist_item(item_id)
+            bucketlistitem = _get_bucketlist_item(item_id, list_id)
             parser.add_argument('item_name')
             parser.add_argument('done')
             arg = parser.parse_args()
@@ -205,7 +208,7 @@ class BucketListItemEdit(Resource):
         """Delete an item form an existing bucketlist."""
         bucketlist = _get_bucketlist(list_id)
         if bucketlist:
-            bucketlistitem = _get_bucketlist_item(item_id)
+            bucketlistitem = _get_bucketlist_item(item_id, list_id)
             session.delete(bucketlistitem)
             session.commit()
             return {'message': 'BucketlistItem {} has been deleted'

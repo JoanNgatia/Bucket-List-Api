@@ -1,3 +1,5 @@
+"""This testcase covers the storage of user information in the database."""
+
 import unittest
 import nose
 

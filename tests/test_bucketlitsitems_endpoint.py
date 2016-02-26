@@ -1,3 +1,5 @@
+"""This testcase covers all routes to the BucketListItems resource."""
+
 from flask import url_for
 import json
 from werkzeug.security import generate_password_hash
@@ -129,4 +131,4 @@ class TestBucketLists(BaseTestCase):
                                    data=json.dumps({
                                        'list_type': fake.name()}),
                                    headers={'token': self.token})
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 200)

@@ -8,7 +8,7 @@ from app.database import init_db
 
 
 class BaseTestCase(TestCase):
-    """A base test case for flask-tracking."""
+    """A base test case for flask-application testing."""
 
     def create_app(self):
         """Set up config variables for the test Flask app."""

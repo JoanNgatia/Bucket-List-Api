@@ -1,3 +1,4 @@
+"""This module manages different configurations for different environments."""
 import os
 
 

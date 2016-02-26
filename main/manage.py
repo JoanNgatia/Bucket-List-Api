@@ -1,5 +1,10 @@
+"""
+This module maps out all the URLs and HTTP methods defined in the resources.
+
+It runs the main application allowing you to make database creations and
+migrations as well as querying from the command line.
+"""
 import os
-from flask import g
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 from flask_restful import Api
@@ -9,7 +14,7 @@ from itsdangerous import TimedJSONWebSignatureSerializer as \
 import sys
 import inspect
 
-from app.api.authentication import UserRegistration, UserLogin, UserLogout
+from app.authentication import UserRegistration, UserLogin, UserLogout
 from app.resources import BucketListAll, BucketListId, \
     BucketListItemAdd, BucketListItemEdit
 from app.database import session
@@ -37,8 +42,11 @@ def create_app(config_type):
     return app
 
 
-if os.getenv('TRAVIS') or sys.argv[0] == 'nosetests':
+"""Define flask app creation in different environments."""
+if os.getenv('TRAVIS'):
     app = create_app(os.environ.get('travis'))
+elif sys.argv[0] == 'nosetests':
+    app = create_app('testing')
 else:
     app = create_app('default')
 
@@ -73,6 +81,7 @@ def load_user(request):
         return user
     return None
 
+# Mapping of resources to URLs."""
 api.add_resource(UserRegistration, '/auth/register/', endpoint='register')
 api.add_resource(UserLogin, '/auth/login/', endpoint='login')
 api.add_resource(UserLogout, '/auth/logout/', endpoint='logout')

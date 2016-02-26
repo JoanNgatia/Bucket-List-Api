@@ -1,3 +1,5 @@
+"""This testcase covers all routes to the BucketList resource."""
+
 from flask import url_for
 import json
 from werkzeug.security import generate_password_hash
@@ -41,7 +43,7 @@ class TestBucketLists(BaseTestCase):
 
     def test_unauthorized_methods(self):
         """Test unsuccessful bucketlist retrieval and
-        creation for unauthorized users.
+           creation for unauthorized users.
         """
         # Test that a user has to have a token to access bucketlists
         response = self.client.get(url_for('bucketlists'))
