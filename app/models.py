@@ -1,20 +1,21 @@
+"""
+This file creates the models for use in defining the database.
+
+Each model represents a table within the database as well as
+the relationships between different tables.
+"""
 import os
 
 from flask.ext.login import UserMixin
 
 from sqlalchemy import Column, String, Integer, DateTime, \
     ForeignKey, Boolean, func
-# from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
-# from sqlalchemy import create_engine
-
-from datetime import datetime
 
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 from database import Base, init_db
-# Base = declarative_base()
 
 
 class User(Base, UserMixin):
@@ -52,15 +53,6 @@ class BucketList(Base):
     date_created = Column(DateTime, default=func.now())
     date_modified = Column(DateTime, default=func.now(), onupdate=func.now())
 
-    def create(self):
-        """Instantiate bucketlist at creation."""
-        self.creator = User.user_id
-        self.date_created = datetime.now()
-
-    def modify(self):
-        """Instantiate modification to bucketlist."""
-        self.date_modified = datetime.now()
-
 
 class BucketListItems(Base):
     """Map table for specific bucketlist items."""
@@ -74,7 +66,4 @@ class BucketListItems(Base):
     bucket_id = Column(Integer, ForeignKey('bucketlist.list_id'))
 
 if __name__ == "__main__":
-    # engine = create_engine(os.environ.get('DATABASE_URL'))
-    # Base.metadata.drop_all(engine)
-    # Base.metadata.create_all(engine)
     init_db()

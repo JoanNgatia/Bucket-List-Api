@@ -1,4 +1,4 @@
-"""This files handles the authentication logic."""
+"""This file implements the authentication logic."""
 from flask import flash
 from flask_restful import reqparse, Resource
 from flask.ext.login import logout_user
