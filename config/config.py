@@ -7,7 +7,7 @@ class Config(object):
     DEBUG = True
     TESTING = True
     SECRET_KEY = os.environ['SECRET_KEY']
-    DATABASE_URL = 'sqlite:///:memory:'
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///bucketlist.db'
 
 
 class TestingConfig(Config):
@@ -25,7 +25,7 @@ class DevelopmentConfig(Config):
     DEVELOPMENT = True
     DEBUG = True
     SECRET_KEY = os.environ['SECRET_KEY']
-
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///bucketlist.db'
 
 config = {
     'development': DevelopmentConfig,
