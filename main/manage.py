@@ -1,5 +1,10 @@
+"""
+This module maps out all the URLs and HTTP methods defined in the resources.
+
+It runs the main application allowing you to make database creations and
+migrations as well as querying from the command line.
+"""
 import os
-from flask import g
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 from flask_restful import Api
@@ -9,7 +14,7 @@ from itsdangerous import TimedJSONWebSignatureSerializer as \
 import sys
 import inspect
 
-from app.api.authentication import UserRegistration, UserLogin, UserLogout
+from app.authentication import UserRegistration, UserLogin, UserLogout
 from app.resources import BucketListAll, BucketListId, \
     BucketListItemAdd, BucketListItemEdit
 from app.database import session
@@ -36,7 +41,15 @@ def create_app(config_type):
     db.init_app(app)
     return app
 
-app = create_app('default')
+
+"""Define flask app creation in different environments."""
+if os.getenv('TRAVIS'):
+    app = create_app(os.environ.get('travis'))
+elif sys.argv[0] == 'nosetests':
+    app = create_app('testing')
+else:
+    app = create_app('default')
+
 api = Api(app)
 
 migrate = Migrate(app, db)
@@ -68,16 +81,17 @@ def load_user(request):
         return user
     return None
 
+# Mapping of resources to URLs."""
 api.add_resource(UserRegistration, '/auth/register/', endpoint='register')
 api.add_resource(UserLogin, '/auth/login/', endpoint='login')
 api.add_resource(UserLogout, '/auth/logout/', endpoint='logout')
 api.add_resource(BucketListAll, '/bucketlists/', endpoint='bucketlists')
 api.add_resource(BucketListId, '/bucketlists/<list_id>/',
                  endpoint='single_bucketlist')
-api.add_resource(BucketListItemAdd, '/bucketlist/<list_id>/item/',
+api.add_resource(BucketListItemAdd, '/bucketlists/<list_id>/items/',
                  endpoint='bucketlistitems')
 api.add_resource(
-    BucketListItemEdit, '/bucketlist/<list_id>/item/<item_id>/',
+    BucketListItemEdit, '/bucketlists/<list_id>/items/<item_id>/',
     endpoint='single_bucketlistitem')
 
 if __name__ == '__main__':
