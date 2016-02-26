@@ -1,13 +1,9 @@
 [![Code Issues](https://www.quantifiedcode.com/api/v1/project/e0557b55469e43bbada740de6704a1fc/badge.svg)](https://www.quantifiedcode.com/app/project/e0557b55469e43bbada740de6704a1fc)
-
 [Code Climate]:https://codeclimate.com/github/andela-jngatia/Bucket-List-Api
 [![Code Climate](https://codeclimate.com/github/andela-jngatia/Bucket-List-Api/badges/gpa.svg)](https://codeclimate.com/github/andela-jngatia/Bucket-List-Api)
-
 [![Build Status](https://travis-ci.org/andela-jngatia/Bucket-List-Api.svg?branch=develop)](https://travis-ci.org/andela-jngatia/Bucket-List-Api)
-
 [![Coverage Status](https://coveralls.io/repos/github/andela-jngatia/Bucket-List-Api/badge.svg?branch=develop)](https://coveralls.io/github/andela-jngatia/Bucket-List-Api?branch=develop)
 
-[![Circle CI](https://circleci.com/gh/andela-jngatia/Bucket-List-Api.svg?style=svg)](https://circleci.com/gh/andela-jngatia/Bucket-List-Api)
 
 # BUCKETLIST API
 This is a bucket list API built on [Flask](http://flask.pocoo.org/).
