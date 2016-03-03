@@ -85,7 +85,8 @@ def load_user(request):
 api.add_resource(UserRegistration, '/auth/register/', endpoint='register')
 api.add_resource(UserLogin, '/auth/login/', endpoint='login')
 api.add_resource(UserLogout, '/auth/logout/', endpoint='logout')
-api.add_resource(BucketListAll, '/bucketlists/', endpoint='bucketlists')
+api.add_resource(BucketListAll, '/bucketlists/', '/bucketlists/page/<page>/',
+                 endpoint='bucketlists')
 api.add_resource(BucketListId, '/bucketlists/<list_id>/',
                  endpoint='single_bucketlist')
 api.add_resource(BucketListItemAdd, '/bucketlists/<list_id>/items/',
