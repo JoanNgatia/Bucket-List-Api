@@ -21,8 +21,8 @@ parser = reqparse.RequestParser()
 
 def paging(fields, paginator, page):
     """
-    Use imported paginator and page arguments to paginate SQLALchemy query
-    sets.The fields argument it takes is used to serialize the results,
+    Use paginated SQLALchemy querysets from Paginator function
+    imported.The fields argument it takes is used to serialize the results,
     courtesy of marshal.
     """
     try:
@@ -52,15 +52,18 @@ def _get_bucketlist_item(item_id, list_id):
 
 class BucketListAll(Resource):
     """
-    Resource to handle '/bucketlists/' and
-    '/bucketlists/<int:page>' endpoint.
+    Resource to handle '/bucketlists/' ,
+    '/bucketlists/page/<int:page>/',
+    '/bucketlists/page/<int:page>/?limit=<rand_int>/',
+    '/bucketlists/page/<int:page>/?q=<rand_name>' endpoint.
     """
 
     @login_required
     def get(self, page=1):
         """Retrieve all bucketlists belonging to the logged in user.
 
-        limit specifies the maximum number of results with default set to 20.
+        limit specifies the maximum number of results per page specified
+        with default set to 20.
         q specifies the term to search by through the bucketlists
         """
         try:
