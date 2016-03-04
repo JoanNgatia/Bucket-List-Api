@@ -1,0 +1,324 @@
+FORMAT: 1A
+HOST: http://polls.apiblueprint.org/
+
+# BucketList-API
+This is a bucket list API built on [Flask](http://flask.pocoo.org/).
+
+This feature rich API requires token based authentication to access resources.
+It also has pagination and search capabilities on the resources requested.
+
+
+The features attached to the service include: 
+* authenticating a user
+* creating new bucketlist items
+* updating and deleting the items 
+* retrieving a list of all created bucket lists by a registered user.
+
+
+## User Authentication 
+
+### Registration [/auth/register/]
+### Register a new user [POST]
+You may use any name or password combination for the registration.
+
++ Request (application/json)
+
+        {
+            "username": "Lana",
+            "password": "Kane"
+        }
+        
++ Response 201 (application/json)
+    
+        {
+            "message": "User Lana has successfully been registered"
+        }
+
+### Login [/auth/login/]
+### Log in a user [POST]
+
+Use your correct password and username cobination to verify your identity.
+Do take note of the token returned on successful login as it will be required
+to access other resources.
+
++ Request (application/json)
+
+        {
+            "username": "Lana",
+            "password": "Kane"
+        }
+        
++ Response 200 (application/json)
+
+        {
+            "token": "Som3Rand0mTok3n"
+        }
+
+## Group Resources
+
+### Bucketlist Resources [/bucketlists/]
+
+### Create a new bucketlist [POST]
+Add a new bucketlist to your to-dos
+
++ Request (application/json)
+    
+    + Headers
+        
+            Authorization: JWT Token
+    
+    + Body
+
+            {
+                "list_name": "Bae for Kiki"
+            }
+            
++ Response 201 (application/json)
+    
+        {
+            "creator": "1",
+            "id": 1,
+            "list_name": "Bae for Kiki",
+            "date_created": "Wed, 17 Feb 2016 12:14:33 -0000",
+            "date_modified": "Wed, 17 Feb 2016 12:14:33 -0000",
+            "items": []
+        }
+
++ Response 400 (application/json)
+
+        {
+            "message": "There was an error while trying to create your bucketlist"
+        }
+
+### List all bucketlists [GET]
+Retrieve all bucketlists belonging to logged in user.
+
++ Request (application/json)
+   
+    + Headers
+        
+            Authorization: JWT Token
+
++ Response 200 (application/json)
+
+        {
+            "creator": "1",
+            "id": 1,
+            "list_name": "Bae for Kiki",
+            "date_created": "Wed, 17 Feb 2016 12:14:33 -0000",
+            "date_modified": "Wed, 17 Feb 2016 12:14:33 -0000",
+            "items": []
+        }
+
++ Response 400 (application/json)
+
+        {
+            "message": "There was an error while trying to get your bucketlists"
+        }
+
++ Response 404 (application/json)
+        
+        {
+            "message": "There was an error while trying to get your bucketlists"
+        }
+
+       
+### Single BucketList Resource [/bucketlists/<list_id>/]
+
+## Get a single bucketlist[GET]
+
++ Parameters
+        
+    + list_id (number) - ID of the required bucketlist
+
++ Request (application/json)
+
+    + Headers
+        
+            Authorization: JWT Token
+
++ Response 200 (application/json)
+
+        {
+            "creator": "1",
+            "id": list_id,
+            "list_name": "Bae for Kiki",
+            "date_created": "Wed, 17 Feb 2016 12:14:33 -0000",
+            "date_modified": "Wed, 17 Feb 2016 12:14:33 -0000",
+            "items": []
+        }
+
++ Response 400 (application/json)
+
+        {
+            "message": "There was an error while trying to get your bucketlists"
+        }
+
++ Response 404 (application/json)
+        
+        {
+            "message": "There was an error while trying to get your bucketlists"
+        }
+
+        
+## Update a single bucketlist[PUT]
++ Parameters
+        
+    + list_id (number) - ID of the required bucketlist
+
++ Request (application/json)
+
+    + Headers
+        
+            Authorization: JWT Token
+
+    + Body 
+    
+            {
+                "id": list_id,
+                "list_name": "updated bucketlist name",
+            }
+            
++ Response 200 (application/json)
+        
+        {
+            "creator": "1",
+            "id": list_id,
+            "list_name": "Updated list name",
+            "date_created": "Wed, 17 Feb 2016 12:14:33 -0000",
+            "date_modified": "Wed, 17 Feb 2016 12:33:33 -0000",
+            "items": []
+        }
+
+       
+## Delete a bucketlist[DELETE]
++ Parameters
+        
+    + list_id (number) - ID of the required bucketlist
+
++ Request (application/json)
+
+    + Headers
+        
+            Authorization: JWT Token
+
++ Response 204 (application/json)
+
++ Response 400 (application/json)
+
+        {
+            "message": "There was an error trying to delete this bucketlist"
+        }
+        
++ Response 404 (application/json)
+
+        {
+            "message": "There was an error while trying to delete this bucketlist"
+        }
+        
+### BucketListItem creation [/bucketlist/<list_id>/item/]
+
+## Add a new bucketlist item [POST]
+Flesh out your bucketlists by stating exactly what you need to achieve. :-)
+
++ Parameters
+        
+    + list_id (number) - ID of the required bucketlist
+
++ Request (application/json)
+
+    + Headers
+        
+            Authorization: JWT Token
+    
+    + Body 
+    
+            {
+                "id": list_id,
+                "item_name": "Tell Archer about #bae4Kiki"
+            }
+
++ Response 200 (application/json)
+    
+        {
+            "creator": "1",
+            "id": list_id,
+            "list_name": "Updated list name",
+            "date_created": "Wed, 17 Feb 2016 12:14:33 -0000",
+            "date_modified": "Wed, 17 Feb 2016 13:36:30 -0000",
+            "items": [
+                        {
+                            "date_created": "Wed, 17 Feb 2016 13:36:30 -0000",
+                            "date_modified": "Wed, 17 Feb 2016 13:36:30 -0000",
+                            "done": false,
+                            "item_id": 1,
+                            "item_name": "Ein Schatz gefunden ist."
+                        }
+            ]
+        }
+
+### BucketListItem manipulation [/bucketlist/<list_id>/item/<item_id>]
+
+You can update or delete the items created as you wish.
+Handy for when you finally want to cross something off your bucketlist.
+
++ Parameters
+        
+    + list_id (number) - ID of the required bucketlist
+    + item_id (number) - ID of the required bucketlist item
+
+## Update a Bucketlist item [PUT]
+
++ Request (application/json)
+
+    + Headers
+        
+            Authorization: JWT Token
+    
+    + Body 
+    
+            {
+                "id": list_id,
+                "item_name": "Tell Mallory about #bae4Kiki"
+            }
+            
++ Response 200 (application/json)
+    
+        {
+            "creator": "1",
+            "id": list_id,
+            "list_name": "Updated list name",
+            "date_created": "Wed, 17 Feb 2016 12:14:33 -0000",
+            "date_modified": "Wed, 17 Feb 2016 13:40:20 -0000",
+            "items": [
+                        {
+                            "date_created": "Wed, 17 Feb 2016 13:36:30 -0000",
+                            "date_modified": "Wed, 17 Feb 2016 13:40:20 -0000",
+                            "done": false,
+                            "item_id": item_id,
+                            "item_name": "Tell Mallory about #bae4Kiki."
+                        }
+            ]
+        }
+
+## Delete a bucketlist item [DELETE]
+
++ Request (application/json)
+
+    + Headers
+        
+            Authorization: JWT Token
+
++ Response 204 (application/json)
+
++ Response 400 (application/json)
+
+        {
+            "message": "There was an error trying to delete this bucketlist item."
+        }
+        
++ Response 404 (application/json)
+
+        {
+            "message": "There was an error while trying to delete this bucketlist item."
+        }
