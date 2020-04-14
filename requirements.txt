@@ -13,7 +13,7 @@ Flask-SQLAlchemy==2.1
 Flask-Testing==0.4.2
 Flask-WhooshAlchemy==0.56
 gnureadline==6.3.3
-httpie==0.9.3
+httpie==1.0.3
 ipdb==0.8.1
 ipython==4.0.3
 ipython-genutils==0.1.0
