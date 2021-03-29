@@ -28,7 +28,7 @@ pbr==1.8.1
 pexpect==4.0.1
 pickleshare==0.6
 ptyprocess==0.5
-Pygments==2.1
+Pygments==2.7.4
 python-dateutil==2.4.2
 python-editor==0.5
 requests==2.20.0
